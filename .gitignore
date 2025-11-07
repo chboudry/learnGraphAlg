@@ -424,5 +424,4 @@ timing_results.json
 # Large datasets
 datasets/
 *.csv
-*.json
 data/
