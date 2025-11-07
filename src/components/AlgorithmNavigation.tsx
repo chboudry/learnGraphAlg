@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { algorithmCategories, Algorithm } from '../data/algorithms';
+import { algorithmCategories, Algorithm, AlgorithmCategory } from '../data/algorithms';
 import './AlgorithmNavigation.css';
 
 interface AlgorithmNavigationProps {
@@ -40,9 +40,9 @@ const AlgorithmNavigation = ({ onAlgorithmSelect, selectedAlgorithm }: Algorithm
         </div>
         
         <ul className="nav-list">
-          {algorithmCategories.map((category) => {
+          {algorithmCategories.map((category: AlgorithmCategory) => {
             const isExpanded = expandedCategories.has(category.id);
-            const hasEnabledAlgorithms = category.algorithms.some(alg => alg.enabled);
+            const hasEnabledAlgorithms = category.algorithms.some((alg: Algorithm) => alg.enabled);
             
             return (
               <li key={category.id} className="nav-category">
