@@ -1,0 +1,135 @@
+.algorithm-header {
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+  padding: 0.75rem 1.5rem;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.header-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  color: #ffffff;
+  background: linear-gradient(90deg, #018bff, #00d9ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: #888;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+}
+
+.github-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: transparent;
+  color: #888;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.github-link:hover {
+  background-color: #333;
+  color: #ffffff;
+  border-color: #555;
+  transform: translateY(-1px);
+}
+
+.github-icon {
+  transition: transform 0.2s ease;
+}
+
+.github-link:hover .github-icon {
+  transform: scale(1.1);
+}
+
+/* Light theme support */
+@media (prefers-color-scheme: light) {
+  .algorithm-header {
+    background-color: #ffffff;
+    border-bottom-color: #e0e0e0;
+  }
+
+  .header-title {
+    color: #1a1a1a;
+    background: linear-gradient(90deg, #0066cc, #00a8cc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header-subtitle {
+    color: #666;
+  }
+
+  .github-link {
+    color: #666;
+  }
+
+  .github-link:hover {
+    background-color: #f0f0f0;
+    color: #1a1a1a;
+    border-color: #ddd;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .algorithm-header {
+    padding: 0.5rem 1rem;
+  }
+
+  .header-title {
+    font-size: 1.2rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .github-link {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Subtle animation for the title */
+.header-title {
+  animation: subtleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes subtleGlow {
+  from {
+    filter: brightness(1);
+  }
+  to {
+    filter: brightness(1.1);
+  }
+}

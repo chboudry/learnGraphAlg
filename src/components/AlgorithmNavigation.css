@@ -1,0 +1,217 @@
+/* Neo4j Design Language inspired styles */
+.algorithm-navigation {
+  width: 280px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  border-right: 1px solid #333;
+  overflow-y: auto;
+}
+
+.ndl-theme {
+  --ndl-primary-color: #018bff;
+  --ndl-secondary-color: #00d9ff;
+  --ndl-text-primary: #ffffff;
+  --ndl-text-secondary: #b0b0b0;
+  --ndl-text-disabled: #666666;
+  --ndl-background-primary: #1a1a1a;
+  --ndl-background-secondary: #2a2a2a;
+  --ndl-border-color: #333333;
+  --ndl-hover-color: #333333;
+}
+
+.side-navigation {
+  height: 100%;
+  padding: 0;
+}
+
+.nav-header {
+  padding: 1.5rem 1rem 1rem 1rem;
+  border-bottom: 1px solid var(--ndl-border-color);
+}
+
+.nav-header h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ndl-text-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.nav-subtitle {
+  margin: 0;
+  color: var(--ndl-text-secondary);
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-category {
+  border-bottom: 1px solid var(--ndl-border-color);
+}
+
+.category-header {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.875rem 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: var(--ndl-text-primary);
+}
+
+.category-header:hover:not(.disabled) {
+  background-color: var(--ndl-hover-color);
+}
+
+.category-header.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.category-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.category-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.expand-icon {
+  font-size: 0.7rem;
+  transition: transform 0.2s ease;
+  color: var(--ndl-text-secondary);
+}
+
+.expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.secondary-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: var(--ndl-background-secondary);
+}
+
+.algorithm-item {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--ndl-text-primary);
+  border-left: 3px solid transparent;
+}
+
+.algorithm-item:hover:not(.disabled) {
+  background-color: var(--ndl-hover-color);
+  border-left-color: var(--ndl-primary-color);
+}
+
+.algorithm-item.selected {
+  background-color: rgba(1, 139, 255, 0.1);
+  border-left-color: var(--ndl-primary-color);
+  color: var(--ndl-primary-color);
+}
+
+.algorithm-item.disabled {
+  cursor: not-allowed;
+}
+
+.algorithm-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.algorithm-name {
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.algorithm-name.grayed-out {
+  color: var(--ndl-text-disabled);
+  opacity: 0.6;
+}
+
+.coming-soon {
+  font-size: 0.7rem;
+  color: var(--ndl-text-disabled);
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Scrollbar styling */
+.algorithm-navigation::-webkit-scrollbar {
+  width: 6px;
+}
+
+.algorithm-navigation::-webkit-scrollbar-track {
+  background: var(--ndl-background-primary);
+}
+
+.algorithm-navigation::-webkit-scrollbar-thumb {
+  background: var(--ndl-border-color);
+  border-radius: 3px;
+}
+
+.algorithm-navigation::-webkit-scrollbar-thumb:hover {
+  background: var(--ndl-text-disabled);
+}
+
+/* Light theme support */
+@media (prefers-color-scheme: light) {
+  .ndl-theme {
+    --ndl-primary-color: #0066cc;
+    --ndl-secondary-color: #00a8cc;
+    --ndl-text-primary: #1a1a1a;
+    --ndl-text-secondary: #666666;
+    --ndl-text-disabled: #999999;
+    --ndl-background-primary: #ffffff;
+    --ndl-background-secondary: #f5f5f5;
+    --ndl-border-color: #e0e0e0;
+    --ndl-hover-color: #f0f0f0;
+  }
+
+  .algorithm-navigation {
+    background-color: var(--ndl-background-primary);
+    border-right-color: var(--ndl-border-color);
+  }
+}
+
+/* Focus styles for accessibility */
+.category-header:focus,
+.algorithm-item:focus {
+  outline: 2px solid var(--ndl-primary-color);
+  outline-offset: -2px;
+}
+
+/* Animation for expand/collapse */
+.secondary-nav {
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
