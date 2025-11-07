@@ -1,0 +1,82 @@
+.graph-visualizer {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.graph-visualizer h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #646cff;
+}
+
+.graph-svg {
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 2px solid #333;
+  display: block;
+  margin: 0 auto;
+}
+
+.edge {
+  stroke: #646cff;
+  stroke-width: 2;
+  opacity: 0.6;
+}
+
+.node {
+  fill: #646cff;
+  stroke: #ffffff;
+  stroke-width: 2;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.node:hover {
+  fill: #535bf2;
+  r: 28;
+}
+
+.node-label {
+  fill: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  pointer-events: none;
+  user-select: none;
+}
+
+.graph-info {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.graph-info p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.graph-info .hint {
+  margin-top: 1rem;
+  font-style: italic;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: light) {
+  .graph-svg {
+    background: #f9f9f9;
+    border-color: #ddd;
+  }
+
+  .graph-info {
+    background: #f9f9f9;
+    border-color: #ddd;
+  }
+
+  .node-label {
+    fill: #000000;
+  }
+}
