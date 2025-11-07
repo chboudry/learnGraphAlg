@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { InteractiveNvlWrapper } from "@neo4j-nvl/react";
 import type { MouseEventCallbacks } from "@neo4j-nvl/react";
 import type { HitTargets, Node, Relationship } from "@neo4j-nvl/base";
