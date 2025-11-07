@@ -7,12 +7,13 @@ const LouvainAlgorithm = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [timelineHeight, setTimelineHeight] = useState(350);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
+  const [showProfile, setShowProfile] = useState(false);
   
   const [nodes] = useState<Node[]>([
     { id: '0', captions: [{ value: 'Node A' }], color: '#ff6b6b' },
     { id: '1', captions: [{ value: 'Node B' }], color: '#4ecdc4' },
-    { id: '2', captions: [{ value: 'Node C' }], color: '#45b7d1' },
-    { id: '3', captions: [{ value: 'Node D' }], color: '#f9ca24' },
+    { id: '2', captions: [{ value: 'Node C' }], color: '#f9ca24' },
+    { id: '3', captions: [{ value: 'Node D' }], color: '#e67e22' },
     { id: '4', captions: [{ value: 'Node E' }], color: '#6c5ce7' }
   ]);
   
@@ -41,10 +42,6 @@ const LouvainAlgorithm = () => {
     "Second pass: apply community detection on the aggregated graph.",
     "Final result with detected communities colored according to their membership."
   ];
-
-  const handleStepChange = (step: number) => {
-    setCurrentStep(step);
-  };
 
   // Callbacks d'événements souris pour l'interactivité
   const mouseEventCallbacks: MouseEventCallbacks = {
@@ -76,10 +73,51 @@ const LouvainAlgorithm = () => {
     }
   };
 
-  const detailsPanelWidth = selectedNode ? 320 : 0; // Largeur panneau + marges
+  const detailsPanelWidth = (selectedNode || showProfile) ? 320 : 0; // Largeur panneau + marges
 
   return (
     <>
+      {/* Icône GitHub flottante */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        right: detailsPanelWidth > 0 ? `${detailsPanelWidth + 20}px` : '20px',
+        width: '50px',
+        height: '50px',
+        background: '#242424',
+        padding: '8px',
+        borderRadius: '50%',
+        zIndex: 1001,
+        transition: 'right 0.3s ease'
+      }}>
+        <img 
+          onClick={() => {
+            setSelectedNode(null);
+            setShowProfile(true);
+          }}
+          src="./src/assets/me.jpeg"
+          alt="Charles Boudry"
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            objectFit: 'cover',
+            cursor: 'pointer',
+            border: '2px solid #555',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = '#666';
+            e.currentTarget.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = '#555';
+            e.currentTarget.style.transform = 'scale(1)';
+          }}
+        />
+      </div>
+
       {/* Graph Area - avec dimensions explicites */}
       <div style={{
         position: 'absolute',
@@ -101,8 +139,8 @@ const LouvainAlgorithm = () => {
         />
       </div>
 
-      {/* Panneau de détails du nœud - Fenêtre flottante */}
-      {selectedNode && (
+      {/* Panneau de détails - Fenêtre flottante */}
+      {(selectedNode || showProfile) && (
         <div style={{
           position: 'fixed',
           top: '20px',
@@ -139,10 +177,13 @@ const LouvainAlgorithm = () => {
               fontSize: '18px',
               fontWeight: 'bold'
             }}>
-              Node Details
+              {showProfile ? 'Developer Profile' : 'Node Details'}
             </h3>
             <button
-              onClick={() => setSelectedNode(null)}
+              onClick={() => {
+                setSelectedNode(null);
+                setShowProfile(false);
+              }}
               style={{
                 background: 'none',
                 border: '1px solid #555',
@@ -157,80 +198,171 @@ const LouvainAlgorithm = () => {
             </button>
           </div>
 
-          {/* Propriétés du nœud */}
+          {/* Contenu dynamique */}
           <div style={{ color: '#ccc' }}>
-            <div style={{ 
-              marginBottom: '15px',
-              padding: '15px',
-              background: '#2a2a2a',
-              borderRadius: '8px',
-              border: '1px solid #444'
-            }}>
-              <h4 style={{ 
-                color: selectedNode.color || '#4ecdc4', 
-                margin: '0 0 10px 0',
-                fontSize: '16px'
+            {showProfile ? (
+              // Profil personnel
+              <div style={{ 
+                marginBottom: '15px',
+                padding: '20px'
               }}>
-                {selectedNode.captions?.[0]?.value || `Node ${selectedNode.id}`}
-              </h4>
-              
-              <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
-                <div style={{ marginBottom: '8px' }}>
-                  <strong style={{ color: '#4ecdc4' }}>ID:</strong> {selectedNode.id}
+                <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                  <img 
+                    src="./src/assets/me.jpeg"
+                    alt="Charles Boudry"
+                    style={{
+                      width: '80px',
+                      height: '80px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      margin: '0 auto 15px',
+                      display: 'block',
+                      border: '3px solid #666'
+                    }}
+                  />
+                  <h4 style={{ 
+                    color: '#ccc', 
+                    margin: '0 0 5px 0',
+                    fontSize: '18px',
+                    fontWeight: 'bold'
+                  }}>
+                    Charles Boudry
+                  </h4>
+                  <div style={{ 
+                    color: '#aaa',
+                    fontSize: '14px',
+                    marginBottom: '15px'
+                  }}>
+                    Senior Consultant Neo4j
+                  </div>
                 </div>
                 
-                <div style={{ marginBottom: '8px' }}>
-                  <strong style={{ color: '#4ecdc4' }}>Color:</strong> 
-                  <span style={{ 
-                    marginLeft: '10px',
-                    padding: '2px 8px',
-                    background: selectedNode.color || '#666',
-                    borderRadius: '3px',
-                    fontSize: '12px'
-                  }}>
-                    {selectedNode.color || 'Undefined'}
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '20px' }}>
+                  {/* Icône LinkedIn */}
+                  <a 
+                    href="https://www.linkedin.com/in/boudry-charles/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '8px',
+                      background: '#0077b5',
+                      transition: 'all 0.3s ease',
+                      textDecoration: 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 119, 181, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                  
+                  {/* Icône GitHub */}
+                  <a 
+                    href="https://github.com/chboudry/learnGraphAlg" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '8px',
+                      background: '#333',
+                      transition: 'all 0.3s ease',
+                      textDecoration: 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.1)';
+                      e.currentTarget.style.background = '#444';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                      e.currentTarget.style.background = '#333';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.91 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                  </a>
                 </div>
-
-                {selectedNode.captions && selectedNode.captions.length > 0 && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <strong style={{ color: '#4ecdc4' }}>Labels:</strong>
-                    <div style={{ marginTop: '5px' }}>
-                      {selectedNode.captions.map((caption, index) => (
-                        <span 
-                          key={index}
-                          style={{ 
-                            background: '#333',
-                            padding: '2px 6px',
-                            borderRadius: '3px',
-                            marginRight: '5px',
-                            fontSize: '12px'
-                          }}
-                        >
-                          {caption.value}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {selectedNode.size && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <strong style={{ color: '#4ecdc4' }}>Size:</strong> {selectedNode.size}
-                  </div>
-                )}
-
-                {(selectedNode.x !== undefined && selectedNode.y !== undefined) && (
-                  <div style={{ marginBottom: '8px' }}>
-                    <strong style={{ color: '#4ecdc4' }}>Position:</strong> 
-                    <br />
-                    <span style={{ fontSize: '12px', color: '#aaa' }}>
-                      X: {selectedNode.x?.toFixed(2)}, Y: {selectedNode.y?.toFixed(2)}
-                    </span>
-                  </div>
-                )}
               </div>
-            </div>
+            ) : selectedNode ? (
+              // Détails du nœud
+              <div style={{ 
+                marginBottom: '15px',
+                padding: '15px',
+                background: '#2a2a2a',
+                borderRadius: '8px',
+                border: '1px solid #444'
+              }}>
+                <h4 style={{ 
+                  color: selectedNode.color || '#ccc', 
+                  margin: '0 0 10px 0',
+                  fontSize: '16px'
+                }}>
+                  {selectedNode.captions?.[0]?.value || `Node ${selectedNode.id}`}
+                </h4>
+                
+                <div style={{ fontSize: '14px', lineHeight: '1.6' }}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <strong style={{ color: '#ccc' }}>ID:</strong> {selectedNode.id}
+                  </div>
+
+                  {selectedNode.captions && selectedNode.captions.length > 0 && (
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong style={{ color: '#ccc' }}>Labels:</strong>
+                      <div style={{ marginTop: '5px' }}>
+                        {selectedNode.captions.map((caption, index) => (
+                          <span 
+                            key={index}
+                            style={{ 
+                              background: '#333',
+                              padding: '2px 6px',
+                              borderRadius: '3px',
+                              marginRight: '5px',
+                              fontSize: '12px'
+                            }}
+                          >
+                            {caption.value}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedNode.size && (
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong style={{ color: '#ccc' }}>Size:</strong> {selectedNode.size}
+                    </div>
+                  )}
+
+                  {(selectedNode.x !== undefined && selectedNode.y !== undefined) && (
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong style={{ color: '#ccc' }}>Position:</strong> 
+                      <br />
+                      <span style={{ fontSize: '12px', color: '#aaa' }}>
+                        X: {selectedNode.x?.toFixed(2)}, Y: {selectedNode.y?.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
         </div>
@@ -306,59 +438,102 @@ const LouvainAlgorithm = () => {
           Louvain Algorithm
         </div>
 
-        {/* Timeline Slider avec points */}
+        {/* Wizard Timeline Bar */}
         <div style={{ 
           marginBottom: '15px',
           marginLeft: '20px',
           marginRight: '20px',
           position: 'relative'
         }}>
-          <input
-            type="range"
-            min="0"
-            max={algorithmSteps.length - 1}
-            value={currentStep}
-            onChange={(e) => handleStepChange(parseInt(e.target.value))}
-            style={{
-              width: '100%',
-              height: '6px',
-              background: '#333',
+          {/* Background track */}
+          <div style={{
+            position: 'relative',
+            height: '6px',
+            background: '#333',
+            borderRadius: '3px',
+            margin: '20px 0'
+          }}>
+            {/* Progress line */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: `${(currentStep / (algorithmSteps.length - 1)) * 100}%`,
+              background: 'linear-gradient(90deg, #666, #888)',
               borderRadius: '3px',
-              outline: 'none',
-              cursor: 'pointer',
-              appearance: 'none'
-            }}
-          />
+              transition: 'width 0.3s ease'
+            }} />
+            
+            {/* Step points directly on the bar */}
+            {algorithmSteps.map((step, index) => {
+              const isCompleted = index <= currentStep;
+              const isCurrent = index === currentStep;
+              const leftPosition = (index / (algorithmSteps.length - 1)) * 100;
+              
+              return (
+                <div
+                  key={index}
+                  onClick={() => setCurrentStep(index)}
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: `${leftPosition}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: isCurrent ? '24px' : '20px',
+                    height: isCurrent ? '24px' : '20px',
+                    borderRadius: '50%',
+                    background: isCompleted ? (isCurrent ? '#666' : '#888') : '#555',
+                    border: isCurrent ? '3px solid #a7a7a7ff' : isCompleted ? '2px solid #333' : '2px solid #444',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: isCurrent ? '12px' : '10px',
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    transition: 'all 0.3s ease',
+                    zIndex: 10,
+                    boxShadow: isCurrent ? '0 1px 3px rgba(15, 44, 42, 0.1)' : isCompleted ? '0 2px 8px rgba(0,0,0,0.3)' : '0 2px 4px rgba(0,0,0,0.2)'
+                  }}
+                  title={step}
+                  onMouseEnter={(e) => {
+                    if (!isCurrent) {
+                      e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isCurrent) {
+                      e.currentTarget.style.transform = 'translate(-50%, -50%) scale(1)';
+                    }
+                  }}
+                >
+                  {index + 1}
+                </div>
+              );
+            })}
+          </div>
           
-          {/* Points pour chaque étape */}
-          <div style={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            marginTop: '8px',
-            position: 'relative'
+          {/* Step labels below */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '10px'
           }}>
             {algorithmSteps.map((step, index) => (
-              <div 
+              <div
                 key={index}
-                onClick={() => setCurrentStep(index)}
-                style={{ 
-                  width: '12px',
-                  height: '12px',
-                  borderRadius: '50%',
-                  background: index === currentStep ? '#4ecdc4' : '#555',
+                style={{
+                  fontSize: '10px',
+                  color: index === currentStep ? '#ccc' : '#666',
+                  textAlign: 'center',
+                  flex: 1,
                   cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '8px',
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  border: index === currentStep ? '2px solid #fff' : '2px solid transparent',
-                  transition: 'all 0.2s ease'
+                  transition: 'color 0.3s ease'
                 }}
-                title={step}
+                onClick={() => setCurrentStep(index)}
               >
-                {index + 1}
+                {step.split(' - ')[0]} {/* Show only the first part of step name */}
               </div>
             ))}
           </div>
@@ -373,7 +548,7 @@ const LouvainAlgorithm = () => {
           marginRight: '20px'
         }}>
           <div style={{ 
-            color: '#4ecdc4', 
+            color: '#ccc', 
             fontSize: '16px', 
             fontWeight: 'bold',
             marginBottom: '8px'
