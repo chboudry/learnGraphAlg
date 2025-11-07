@@ -74,9 +74,6 @@ const AlgorithmNavigation = ({ onAlgorithmSelect, selectedAlgorithm }: Algorithm
                             <span className={`algorithm-name ${!algorithm.enabled ? 'grayed-out' : ''}`}>
                               {algorithm.name}
                             </span>
-                            {!algorithm.enabled && (
-                              <span className="coming-soon">Coming Soon</span>
-                            )}
                           </div>
                         </button>
                       </li>

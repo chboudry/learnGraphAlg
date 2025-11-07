@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { BasicNvlWrapper } from "@neo4j-nvl/react";
-import { Node, Relationship } from "@neo4j-nvl/base";
+import { InteractiveNvlWrapper } from "@neo4j-nvl/react";
+import type { MouseEventCallbacks } from "@neo4j-nvl/react";
+import type { HitTargets, Node, Relationship } from "@neo4j-nvl/base";
 
 const LouvainAlgorithm = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -45,7 +46,33 @@ const LouvainAlgorithm = () => {
     setIsPlaying(false);
   };
 
-  // Dimensions explicites pour éviter les problèmes de canvas
+  // Callbacks d'événements souris pour l'interactivité
+  const mouseEventCallbacks: MouseEventCallbacks = {
+    onNodeClick: (node: Node, _hitTargets: HitTargets, _originalEvent: MouseEvent) => {
+      console.log('Node clicked:', node.id);
+    },
+    onNodeDoubleClick: (node: Node, _hitTargets: HitTargets, _originalEvent: MouseEvent) => {
+      console.log('Node double-clicked:', node.id);
+    },
+    onDrag: (draggedNodes: Node[], _originalEvent: MouseEvent) => {
+      console.log('Nodes dragged:', draggedNodes.map(n => n.id));
+    },
+    onHover: (_element: Node | Relationship, _hitTargets: HitTargets, _originalEvent: MouseEvent) => {
+      // Changement de curseur au survol
+      document.body.style.cursor = 'pointer';
+    },
+    onPan: (_pan: { x: number; y: number }, _originalEvent: MouseEvent) => {
+      // Remettre le curseur normal lors du panoramique
+      document.body.style.cursor = 'default';
+    },
+    onZoom: (zoomLevel: number, _originalEvent: MouseEvent) => {
+      console.log('Zoom level:', zoomLevel);
+    },
+    onCanvasClick: (_originalEvent: MouseEvent) => {
+      // Remettre le curseur normal quand on clique sur le canvas
+      document.body.style.cursor = 'default';
+    }
+  };
 
   return (
     <>
@@ -58,13 +85,14 @@ const LouvainAlgorithm = () => {
         height: `calc(100vh - ${timelineHeight}px)`, // Hauteur explicite
         background: '#242424'
       }}>
-        <BasicNvlWrapper
+        <InteractiveNvlWrapper
           nvlOptions={{ 
             initialZoom: 1.5,
             renderer: 'canvas'
           }}
           nodes={nodes}
           rels={relationships}
+          mouseEventCallbacks={mouseEventCallbacks}
         />
       </div>
 
