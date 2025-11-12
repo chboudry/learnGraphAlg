@@ -158,7 +158,10 @@ const GraphVisualization = ({
               ...node,
               size: node.size ? node.size * 1.5 : 60
             }))}
-            rels={relationships}
+            rels={relationships.map(rel => ({
+              ...rel,
+              color: rel.color || '#666666'
+            }))}
             mouseEventCallbacks={mouseEventCallbacks}
             nvlOptions={{
               renderer: 'canvas',

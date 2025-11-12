@@ -52,7 +52,7 @@ export const algorithmCategories: AlgorithmCategory[] = [
           { 
             id: 'newman', 
             name: 'Newman Modularity',
-            file: 'louvain.json',
+            file: 'louvain-newman.json',
             default: true 
           },
           { 
