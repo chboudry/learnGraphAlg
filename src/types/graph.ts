@@ -14,5 +14,7 @@ export interface AlgorithmStep {
 
 export interface LouvainGraphData {
   title: string;
+  category: string;
+  description: string;
   steps: AlgorithmStep[];
 }

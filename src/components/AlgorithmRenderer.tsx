@@ -4,6 +4,7 @@ import type { MouseEventCallbacks } from "@neo4j-nvl/react";
 import type { HitTargets, Node, Relationship } from "@neo4j-nvl/base";
 import type { LouvainGraphData } from "../types/graph";
 import { validateLouvainGraphData } from "../utils/graphDataLoader";
+import ReactMarkdown from 'react-markdown';
 
 interface AlgorithmRendererProps {
   algorithmId: string;
@@ -20,15 +21,16 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
-  // Chargement dynamique des données d'algorithme
+  // Chargement dynamique des données d'algorithme avec HMR automatique
   useEffect(() => {
     const loadAlgorithmData = async () => {
       setIsLoading(true);
       setHasError(false);
       
       try {
-        // Import dynamique du fichier JSON basé sur l'algorithmId
-        const module = await import(`../data/${algorithmId}.json`);
+        // Import dynamique du fichier JSON avec hot reloading
+        // Le paramètre ?init rend le fichier JSON hot-reloadable dans Vite
+        const module = await import(`../data/${algorithmId}.json?init`);
         const data = module.default as LouvainGraphData;
         
         // Validation des données
@@ -52,6 +54,8 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
         setSelectedNode(null);
         setShowProfile(false);
         setIsLoading(false);
+        
+        console.log(`📋 Données de l'algorithme ${algorithmId} chargées avec HMR activé`);
         
       } catch (error) {
         console.error(`Erreur lors du chargement de l'algorithme ${algorithmId}:`, error);
@@ -464,10 +468,6 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
         height: `${timelineHeight}px`,
         background: '#1a1a1a',
         borderTop: '1px solid #333',
-        padding: '15px',
-        paddingLeft: '40px',
-        paddingRight: '40px',
-        paddingBottom: '10px',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 1000
@@ -493,7 +493,7 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
             const startHeight = timelineHeight;
             
             const handleMouseMove = (e: MouseEvent) => {
-              const newHeight = Math.max(120, Math.min(280, startHeight - (e.clientY - startY)));
+              const newHeight = Math.max(120, Math.min(600, startHeight - (e.clientY - startY)));
               setTimelineHeight(newHeight);
             };
             
@@ -513,16 +513,71 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
           }} />
         </div>
 
-        {/* Algorithm title */}
-        <div style={{ 
-          color: '#fff', 
-          fontSize: '18px', 
-          fontWeight: 'bold',
-          marginBottom: '15px',
-          marginLeft: '20px',
-          textAlign: 'left'
+        {/* Scrollable Content Container */}
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          padding: '15px 40px 10px 40px',
+          scrollBehavior: 'smooth'
         }}>
-          {algorithmTitle}
+          {/* Algorithm title */}
+          <div style={{ 
+            color: '#fff', 
+            fontSize: '18px', 
+            fontWeight: 'bold',
+            marginBottom: '8px',
+            marginLeft: '20px',
+            textAlign: 'left'
+          }}>
+            {algorithmTitle}
+          </div>
+
+        {/* Category badge */}
+        <div style={{
+          marginLeft: '20px',
+          marginBottom: '15px'
+        }}>
+          <span style={{
+            background: '#4ecdc4',
+            color: '#fff',
+            padding: '4px 12px',
+            borderRadius: '12px',
+            fontSize: '12px',
+            fontWeight: '500',
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px'
+          }}>
+            {algorithmData.category}
+          </span>
+        </div>
+
+        {/* Algorithm description */}
+        <div style={{
+          marginLeft: '20px',
+          marginRight: '20px',
+          marginBottom: '20px',
+          padding: '15px',
+          background: '#1a1a1a',
+          borderRadius: '8px',
+          border: '1px solid #333'
+        }}>
+          <ReactMarkdown
+            components={{
+              h1: ({children}) => <h1 style={{color: '#fff', fontSize: '16px', margin: '0 0 10px 0'}}>{children}</h1>,
+              h2: ({children}) => <h2 style={{color: '#fff', fontSize: '15px', margin: '10px 0 8px 0'}}>{children}</h2>,
+              h3: ({children}) => <h3 style={{color: '#4ecdc4', fontSize: '14px', margin: '8px 0 6px 0'}}>{children}</h3>,
+              p: ({children}) => <p style={{color: '#ccc', fontSize: '13px', lineHeight: '1.5', margin: '0 0 8px 0'}}>{children}</p>,
+              strong: ({children}) => <strong style={{color: '#fff'}}>{children}</strong>,
+              em: ({children}) => <em style={{color: '#f39c12'}}>{children}</em>,
+              code: ({children}) => <code style={{background: '#333', color: '#4ecdc4', padding: '2px 4px', borderRadius: '3px', fontSize: '12px'}}>{children}</code>,
+              pre: ({children}) => <pre style={{background: '#0d1117', padding: '10px', borderRadius: '6px', overflow: 'auto', margin: '8px 0'}}>{children}</pre>,
+              ul: ({children}) => <ul style={{color: '#ccc', fontSize: '13px', margin: '0 0 8px 0', paddingLeft: '20px'}}>{children}</ul>,
+              li: ({children}) => <li style={{marginBottom: '4px'}}>{children}</li>
+            }}
+          >
+            {algorithmData.description}
+          </ReactMarkdown>
         </div>
 
         {/* Wizard Timeline Bar */}
@@ -646,9 +701,25 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
             color: '#aaa',
             fontSize: '13px'
           }}>
-            {stepDescriptions[currentStep]}
+            <ReactMarkdown
+              components={{
+                h1: ({children}) => <h1 style={{color: '#fff', fontSize: '15px', margin: '0 0 8px 0'}}>{children}</h1>,
+                h2: ({children}) => <h2 style={{color: '#fff', fontSize: '14px', margin: '8px 0 6px 0'}}>{children}</h2>,
+                h3: ({children}) => <h3 style={{color: '#4ecdc4', fontSize: '13px', margin: '6px 0 4px 0'}}>{children}</h3>,
+                p: ({children}) => <p style={{color: '#aaa', fontSize: '13px', lineHeight: '1.4', margin: '0 0 8px 0'}}>{children}</p>,
+                strong: ({children}) => <strong style={{color: '#fff'}}>{children}</strong>,
+                em: ({children}) => <em style={{color: '#f39c12'}}>{children}</em>,
+                code: ({children}) => <code style={{background: '#333', color: '#4ecdc4', padding: '1px 3px', borderRadius: '2px', fontSize: '12px'}}>{children}</code>,
+                pre: ({children}) => <pre style={{background: '#0d1117', padding: '8px', borderRadius: '4px', overflow: 'auto', margin: '6px 0', fontSize: '11px'}}>{children}</pre>,
+                ul: ({children}) => <ul style={{color: '#aaa', fontSize: '13px', margin: '0 0 6px 0', paddingLeft: '16px'}}>{children}</ul>,
+                li: ({children}) => <li style={{marginBottom: '2px'}}>{children}</li>
+              }}
+            >
+              {stepDescriptions[currentStep]}
+            </ReactMarkdown>
           </div>
-        </div>
+        </div> {/* Fermeture de la section étapes */}
+        </div> {/* Fermeture du conteneur scrollable */}
       </div>
     </>
   );

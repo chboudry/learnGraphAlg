@@ -1,9 +1,11 @@
 {
   "title": "Dijkstra Algorithm",
+  "category": "Shortest Path",
+  "description": "**Dijkstra's algorithm** finds the shortest path between nodes in a weighted graph. It's a greedy algorithm that always selects the unvisited node with the smallest distance.\n\n### Key Properties:\n- **Greedy**: Always picks the closest unvisited node\n- **Optimal**: Guarantees shortest path for non-negative weights\n- **Complexity**: O((V + E) log V) with priority queue\n\n### Applications:\n- GPS navigation systems\n- Network routing protocols\n- Social network analysis\n\n### Requirements:\n- All edge weights must be **non-negative**",
   "steps": [
     {
       "name": "Initial State",
-      "description": "Initialize all distances to infinity except the source node. Set source distance to 0.",
+      "description": "🚀 **Initialization Phase**\n\nSet up the algorithm with starting conditions:\n\n### Distance Table:\n- **Source node A**: distance = **0** ✅\n- **All other nodes**: distance = **∞**\n\n### Data Structures:\n- **Unvisited set**: {A, B, C, D, E}\n- **Priority queue**: A(0), B(∞), C(∞), D(∞), E(∞)\n\n**Current node**: A (distance 0, colored 🔵)\n**Goal**: Find shortest paths from A to all other nodes",
       "nodes": [
         {
           "id": "A",
@@ -78,7 +80,7 @@
     },
     {
       "name": "Process Node A",
-      "description": "Process source node A and update distances to its neighbors B and C.",
+      "description": "📍 **Step 1: Process Node A**\n\nSelect A (smallest distance = 0) and update its neighbors:\n\n### Relaxation Process:\n- **A → B**: distance = 0 + 4 = **4** (update from ∞)\n- **A → C**: distance = 0 + 2 = **2** (update from ∞)\n\n### Status Update:\n- **Node A**: ✅ Visited (green)\n- **Node B**: 📋 Tentative distance 4 (orange)\n- **Node C**: 📋 Tentative distance 2 (orange)\n\n**Next**: Select unvisited node with smallest distance",
       "nodes": [
         {
           "id": "A",
@@ -155,7 +157,7 @@
     },
     {
       "name": "Process Node C",
-      "description": "Process node C (smallest unvisited distance) and update distances to its neighbors.",
+      "description": "📍 **Step 2: Process Node C**\n\nSelect C (smallest unvisited distance = 2) and update neighbors:\n\n### Relaxation Process:\n- **C → B**: distance = 2 + 1 = **3** < 4 ✅ (update B)\n- **C → D**: distance = 2 + 8 = **10** < ∞ ✅ (update D)\n- **C → E**: distance = 2 + 10 = **12** < ∞ ✅ (update E)\n\n### Status Update:\n- **Node C**: ✅ Visited (green)\n- **Node B**: 📋 Improved to distance 3\n- **Nodes D, E**: 📋 First distances assigned\n\n**Next**: Process B (distance 3)",
       "nodes": [
         {
           "id": "A",
@@ -234,7 +236,7 @@
     },
     {
       "name": "Final Result",
-      "description": "All nodes processed. Shortest paths from A are established with optimal distances.",
+      "description": "🎯 **Algorithm Complete**\n\nAll nodes processed! Shortest paths from **A** established:\n\n### Final Distances from A:\n- **A → A**: 0 (source)\n- **A → B**: 3 (path: A → C → B)\n- **A → C**: 2 (path: A → C)\n- **A → D**: 10 (path: A → C → D)\n- **A → E**: 12 (path: A → C → E)\n\n### Path Reconstruction:\n🛤️ **Shortest Path A → E**: A → C → E (total: 12)\n\n**All nodes**: ✅ Visited (green) with optimal distances",
       "nodes": [
         {
           "id": "A",

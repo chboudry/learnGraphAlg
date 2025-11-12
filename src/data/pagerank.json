@@ -1,9 +1,11 @@
 {
   "title": "PageRank Algorithm",
+  "category": "Link Analysis",
+  "description": "**PageRank** is Google's original algorithm for ranking web pages. It measures the importance of nodes in a network based on the link structure.\n\n### Core Concept:\n- A page is important if other important pages link to it\n- Uses the *\"random surfer\"* model\n\n### Formula:\n```\nPR(A) = (1-d)/N + d * Σ(PR(Ti)/C(Ti))\n```\n\nWhere:\n- `d` = damping factor (typically 0.85)\n- `N` = total number of pages\n- `Ti` = pages linking to A\n- `C(Ti)` = number of outbound links from Ti",
   "steps": [
     {
       "name": "Initial Graph",
-      "description": "Initial graph with equal PageRank values for all nodes (1/N where N is the number of nodes).",
+      "description": "📊 **Initialization Phase**\n\nAll nodes start with equal PageRank values:\n\n**Initial PR = 1/N = 1/4 = 0.25**\n\n### Graph Structure:\n- **4 nodes**: A, B, C, D\n- **Directed edges**: Represent hyperlinks\n- **Random surfer**: 25% probability of starting at any node\n\n*Note: Node size represents PageRank value*",
       "nodes": [
         {
           "id": "A",
@@ -65,7 +67,7 @@
     },
     {
       "name": "First Iteration",
-      "description": "Calculate PageRank for each node based on incoming links and their current PageRank values.",
+      "description": "🔄 **Iteration #1**\n\nCalculate new PageRank values using the formula:\n\n### Calculations:\n- **Node A**: Receives links from B, C → PR = 0.21\n- **Node B**: Receives link from A → PR = 0.19  \n- **Node C**: Receives links from A, D → PR = 0.32\n- **Node D**: Receives link from C → PR = 0.28\n\n### Observations:\n✨ **Node C** gains importance (most incoming links)\n📉 **Node B** loses importance (fewest incoming links)",
       "nodes": [
         {
           "id": "A",
@@ -127,7 +129,7 @@
     },
     {
       "name": "Convergence",
-      "description": "Algorithm converges when PageRank values stabilize. Final ranking shows page importance.",
+      "description": "🎯 **Final Convergence**\n\nAfter multiple iterations, PageRank values stabilize:\n\n### Final Rankings:\n1. 🥇 **Node C** (PR: 0.35) - *Most important*\n2. 🥈 **Node D** (PR: 0.28) - *Second*  \n3. 🥉 **Node A** (PR: 0.22) - *Third*\n4. 4️⃣ **Node B** (PR: 0.15) - *Least important*\n\n### Key Insights:\n- **Node C**: Benefits from multiple incoming links\n- **Node B**: Suffers from limited incoming authority\n- **Convergence**: Values change less than threshold ε",
       "nodes": [
         {
           "id": "A",

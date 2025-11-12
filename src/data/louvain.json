@@ -1,9 +1,11 @@
 {
-  "title": "Louvain Algorithm",
+  "title": "Louvain Community Detection",
+  "category": "Community Detection",
+  "description": "The **Louvain algorithm** is a method for finding communities in large networks. It maximizes the *modularity* measure, which quantifies the quality of a division of a network into communities.\n\n### Key Features:\n- **Fast**: Runs in O(n log n) time\n- **Hierarchical**: Creates a hierarchy of communities\n- **Greedy**: Uses a greedy optimization approach\n\n### Applications:\n- Social network analysis\n- Biological networks\n- Citation networks",
   "steps": [
     {
       "name": "Initial Graph",
-      "description": "Initial graph where all nodes are in their own community. Two communities of 3 nodes each, connected by a bridge.",
+      "description": "**Initial State**: Each node starts in its own community.\n\n🔗 **Graph Structure**:\n- **Community 1**: Nodes A, B, C (densely connected)\n- **Community 2**: Nodes D, E, F (densely connected)\n- **Bridge**: Single connection C ↔ D\n\nThis structure is ideal for demonstrating community detection algorithms.",
       "nodes": [
         {
           "id": "A",
@@ -59,8 +61,7 @@
           "id": "CD",
           "from": "C",
           "to": "D",
-          "captions": [{ "value": "bridge: 1" }],
-          "color": "#e74c3c"
+          "captions": [{ "value": "weight: 1" }]
         },
         {
           "id": "DE",
@@ -84,7 +85,7 @@
     },
     {
       "name": "Calculate Modularity",
-      "description": "Calculate the modularity of the current graph to measure the quality of the community partition.",
+      "description": "📊 **Modularity Calculation**\n\nThe modularity *Q* measures the quality of community division:\n\n```\nQ = (1/2m) Σ [Aij - (ki*kj)/2m] δ(ci,cj)\n```\n\nWhere:\n- `Aij` = adjacency matrix element\n- `ki`, `kj` = degrees of nodes i, j\n- `m` = total number of edges\n- `δ(ci,cj)` = 1 if nodes i,j are in same community\n\n**Current Q = 0.0** (each node in its own community)",
       "nodes": [
         {
           "id": "A",
@@ -140,8 +141,7 @@
           "id": "CD",
           "from": "C",
           "to": "D",
-          "captions": [{ "value": "bridge: 1" }],
-          "color": "#e74c3c"
+          "captions": [{ "value": "weight: 1" }]
         },
         {
           "id": "DE",
@@ -165,7 +165,7 @@
     },
     {
       "name": "Community Detection - Pass 1",
-      "description": "First pass: nodes A, B, C form community 1, and nodes D, E, F form community 2.",
+      "description": "🎯 **Phase 1: Local Optimization**\n\nEach node evaluates whether joining a neighbor's community improves modularity:\n\n### Results:\n- **Community 1** (🔴): A, B, C\n  - High internal connectivity (3 edges)\n  - Strong community structure\n- **Community 2** (🔵): D, E, F\n  - High internal connectivity (3 edges)\n  - Strong community structure\n\n**Bridge connection** C-D remains *inter-community*",
       "nodes": [
         {
           "id": "A",
@@ -252,19 +252,17 @@
     },
     {
       "name": "Community Aggregation",
-      "description": "Aggregation of nodes belonging to the same community into super-nodes to create a new graph.",
+      "description": "🔄 **Phase 2: Community Aggregation**\n\nNodes belonging to the same community are merged into **super-nodes**:\n\n### Aggregation Process:\n1. **Community 1** → Super-node (A,B,C)\n   - Weight: 3 nodes\n   - Internal edges: 3\n2. **Community 2** → Super-node (D,E,F)\n   - Weight: 3 nodes  \n   - Internal edges: 3\n\n**Inter-community edges** become edges between super-nodes",
       "nodes": [
         {
           "id": "super1",
           "captions": [{ "value": "Community 1 (A,B,C)" }],
-          "color": "#ff6b6b",
-          "size": 3
+          "color": "#ff6b6b"
         },
         {
           "id": "super2",
           "captions": [{ "value": "Community 2 (D,E,F)" }],
-          "color": "#4ecdc4",
-          "size": 3
+          "color": "#4ecdc4"
         }
       ],
       "relationships": [
@@ -279,19 +277,17 @@
     },
     {
       "name": "Community Detection - Pass 2",
-      "description": "Second pass: communities remain separate due to the weak bridge connection.",
+      "description": "🔄 **Iteration 2: Super-node Analysis**\n\nApply community detection on the aggregated graph:\n\n### Analysis:\n- **Super-node 1** and **Super-node 2** evaluation\n- Bridge connection weight: **1**\n- Internal community weights: **3** each\n\n### Decision:\n🚫 **No merge** - The bridge is too weak compared to internal connections\n\n**Result**: Communities remain separate",
       "nodes": [
         {
           "id": "super1",
           "captions": [{ "value": "Community 1 (A,B,C)" }],
-          "color": "#ff6b6b",
-          "size": 3
+          "color": "#ff6b6b"
         },
         {
           "id": "super2",
           "captions": [{ "value": "Community 2 (D,E,F)" }],
-          "color": "#4ecdc4",
-          "size": 3
+          "color": "#4ecdc4"
         }
       ],
       "relationships": [
@@ -306,7 +302,7 @@
     },
     {
       "name": "Final Communities",
-      "description": "Final result: two distinct communities detected by the Louvain algorithm.",
+      "description": "🎉 **Final Result**\n\nThe Louvain algorithm successfully detected **two distinct communities**:\n\n### Community 1 (🔴)\n- **Nodes**: A, B, C\n- **Internal edges**: 3\n- **Modularity contribution**: High\n\n### Community 2 (🔵)  \n- **Nodes**: D, E, F\n- **Internal edges**: 3\n- **Modularity contribution**: High\n\n### Bridge Connection\n- **C ↔ D**: Remains as inter-community link\n- **Role**: Structural bridge between communities\n\n**Final Modularity**: Significantly improved from initial Q=0.0",
       "nodes": [
         {
           "id": "A",
