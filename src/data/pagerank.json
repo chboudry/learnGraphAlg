@@ -1,0 +1,191 @@
+{
+  "title": "PageRank Algorithm",
+  "steps": [
+    {
+      "name": "Initial Graph",
+      "description": "Initial graph with equal PageRank values for all nodes (1/N where N is the number of nodes).",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "Page A (PR: 0.25)" }],
+          "color": "#888888",
+          "size": 1
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "Page B (PR: 0.25)" }],
+          "color": "#888888",
+          "size": 1
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "Page C (PR: 0.25)" }],
+          "color": "#888888",
+          "size": 1
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "Page D (PR: 0.25)" }],
+          "color": "#888888",
+          "size": 1
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e2",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e3",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e4",
+          "from": "C",
+          "to": "A",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e5",
+          "from": "D",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        }
+      ]
+    },
+    {
+      "name": "First Iteration",
+      "description": "Calculate PageRank for each node based on incoming links and their current PageRank values.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "Page A (PR: 0.21)" }],
+          "color": "#ff6b6b",
+          "size": 1.2
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "Page B (PR: 0.19)" }],
+          "color": "#4ecdc4",
+          "size": 1.1
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "Page C (PR: 0.41)" }],
+          "color": "#f9ca24",
+          "size": 1.6
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "Page D (PR: 0.19)" }],
+          "color": "#e67e22",
+          "size": 1.1
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e2",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e3",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e4",
+          "from": "C",
+          "to": "A",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e5",
+          "from": "D",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        }
+      ]
+    },
+    {
+      "name": "Convergence",
+      "description": "Algorithm converges when PageRank values stabilize. Final ranking shows page importance.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "Page A (PR: 0.22)" }],
+          "color": "#ff6b6b",
+          "size": 1.3
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "Page B (PR: 0.18)" }],
+          "color": "#4ecdc4",
+          "size": 1.0
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "Page C (PR: 0.42)" }],
+          "color": "#f9ca24",
+          "size": 1.7
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "Page D (PR: 0.18)" }],
+          "color": "#e67e22",
+          "size": 1.0
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e2",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e3",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e4",
+          "from": "C",
+          "to": "A",
+          "captions": [{ "value": "links to" }]
+        },
+        {
+          "id": "e5",
+          "from": "D",
+          "to": "C",
+          "captions": [{ "value": "links to" }]
+        }
+      ]
+    }
+  ]
+}

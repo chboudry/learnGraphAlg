@@ -1,0 +1,321 @@
+{
+  "title": "Louvain Algorithm",
+  "steps": [
+    {
+      "name": "Initial Graph",
+      "description": "Initial graph where all nodes are in their own community. Each node is considered as a distinct community.",
+      "nodes": [
+        {
+          "id": "0",
+          "captions": [{ "value": "Node A" }],
+          "color": "#888888"
+        },
+        {
+          "id": "1",
+          "captions": [{ "value": "Node B" }],
+          "color": "#888888"
+        },
+        {
+          "id": "2",
+          "captions": [{ "value": "Node C" }],
+          "color": "#888888"
+        },
+        {
+          "id": "3",
+          "captions": [{ "value": "Node D" }],
+          "color": "#888888"
+        },
+        {
+          "id": "4",
+          "captions": [{ "value": "Node E" }],
+          "color": "#888888"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "0",
+          "to": "1",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e2",
+          "from": "1",
+          "to": "2",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e3",
+          "from": "2",
+          "to": "3",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e4",
+          "from": "3",
+          "to": "4",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e5",
+          "from": "0",
+          "to": "3",
+          "captions": [{ "value": "connects" }]
+        }
+      ]
+    },
+    {
+      "name": "Calculate Modularity",
+      "description": "Calculate the modularity of the current graph to measure the quality of the community partition.",
+      "nodes": [
+        {
+          "id": "0",
+          "captions": [{ "value": "Node A (Q=0.1)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "1",
+          "captions": [{ "value": "Node B (Q=0.1)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "2",
+          "captions": [{ "value": "Node C (Q=0.1)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "3",
+          "captions": [{ "value": "Node D (Q=0.1)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "4",
+          "captions": [{ "value": "Node E (Q=0.1)" }],
+          "color": "#888888"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "0",
+          "to": "1",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e2",
+          "from": "1",
+          "to": "2",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e3",
+          "from": "2",
+          "to": "3",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e4",
+          "from": "3",
+          "to": "4",
+          "captions": [{ "value": "connects" }]
+        },
+        {
+          "id": "e5",
+          "from": "0",
+          "to": "3",
+          "captions": [{ "value": "connects" }]
+        }
+      ]
+    },
+    {
+      "name": "Community Detection - Pass 1",
+      "description": "First pass: each node evaluates whether it should join a neighbor's community to improve modularity.",
+      "nodes": [
+        {
+          "id": "0",
+          "captions": [{ "value": "Node A (C1)" }],
+          "color": "#ff6b6b"
+        },
+        {
+          "id": "1",
+          "captions": [{ "value": "Node B (C1)" }],
+          "color": "#ff6b6b"
+        },
+        {
+          "id": "2",
+          "captions": [{ "value": "Node C (C2)" }],
+          "color": "#4ecdc4"
+        },
+        {
+          "id": "3",
+          "captions": [{ "value": "Node D (C2)" }],
+          "color": "#4ecdc4"
+        },
+        {
+          "id": "4",
+          "captions": [{ "value": "Node E (C2)" }],
+          "color": "#4ecdc4"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "0",
+          "to": "1",
+          "captions": [{ "value": "intra-community" }],
+          "color": "#ff6b6b"
+        },
+        {
+          "id": "e2",
+          "from": "1",
+          "to": "2",
+          "captions": [{ "value": "inter-community" }],
+          "color": "#999999"
+        },
+        {
+          "id": "e3",
+          "from": "2",
+          "to": "3",
+          "captions": [{ "value": "intra-community" }],
+          "color": "#4ecdc4"
+        },
+        {
+          "id": "e4",
+          "from": "3",
+          "to": "4",
+          "captions": [{ "value": "intra-community" }],
+          "color": "#4ecdc4"
+        },
+        {
+          "id": "e5",
+          "from": "0",
+          "to": "3",
+          "captions": [{ "value": "inter-community" }],
+          "color": "#999999"
+        }
+      ]
+    },
+    {
+      "name": "Community Aggregation",
+      "description": "Aggregation of nodes belonging to the same community into super-nodes to create a new graph.",
+      "nodes": [
+        {
+          "id": "super1",
+          "captions": [{ "value": "Community 1 (A,B)" }],
+          "color": "#ff6b6b",
+          "size": 2
+        },
+        {
+          "id": "super2",
+          "captions": [{ "value": "Community 2 (C,D,E)" }],
+          "color": "#4ecdc4",
+          "size": 3
+        }
+      ],
+      "relationships": [
+        {
+          "id": "super_e1",
+          "from": "super1",
+          "to": "super2",
+          "captions": [{ "value": "inter-community (weight: 2)" }],
+          "color": "#999999"
+        }
+      ]
+    },
+    {
+      "name": "Community Detection - Pass 2",
+      "description": "Second pass: apply community detection on the aggregated graph.",
+      "nodes": [
+        {
+          "id": "super1",
+          "captions": [{ "value": "Community 1 (A,B)" }],
+          "color": "#f9ca24",
+          "size": 2
+        },
+        {
+          "id": "super2",
+          "captions": [{ "value": "Community 2 (C,D,E)" }],
+          "color": "#f9ca24",
+          "size": 3
+        }
+      ],
+      "relationships": [
+        {
+          "id": "super_e1",
+          "from": "super1",
+          "to": "super2",
+          "captions": [{ "value": "merged community" }],
+          "color": "#f9ca24"
+        }
+      ]
+    },
+    {
+      "name": "Final Communities",
+      "description": "Final result with detected communities colored according to their membership.",
+      "nodes": [
+        {
+          "id": "0",
+          "captions": [{ "value": "Node A (Final C1)" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "1",
+          "captions": [{ "value": "Node B (Final C1)" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "2",
+          "captions": [{ "value": "Node C (Final C1)" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "3",
+          "captions": [{ "value": "Node D (Final C1)" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "4",
+          "captions": [{ "value": "Node E (Final C1)" }],
+          "color": "#f9ca24"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "e1",
+          "from": "0",
+          "to": "1",
+          "captions": [{ "value": "same community" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "e2",
+          "from": "1",
+          "to": "2",
+          "captions": [{ "value": "same community" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "e3",
+          "from": "2",
+          "to": "3",
+          "captions": [{ "value": "same community" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "e4",
+          "from": "3",
+          "to": "4",
+          "captions": [{ "value": "same community" }],
+          "color": "#f9ca24"
+        },
+        {
+          "id": "e5",
+          "from": "0",
+          "to": "3",
+          "captions": [{ "value": "same community" }],
+          "color": "#f9ca24"
+        }
+      ]
+    }
+  ]
+}

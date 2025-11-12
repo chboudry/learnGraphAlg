@@ -1,28 +1,15 @@
 import { useState } from 'react'
 import './App.css'
 import AlgorithmNavigation from './components/AlgorithmNavigation'
-import LouvainAlgorithm from './components/LouvainAlgorithm'
-import GraphVisualizer from './components/GraphVisualizer'
+import AlgorithmRenderer from './components/AlgorithmRenderer'
 
 function App() {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>('louvain');
 
   const renderAlgorithm = () => {
-    switch (selectedAlgorithm) {
-      case 'louvain':
-        return <LouvainAlgorithm />;
-      default:
-        return (
-          <div className="placeholder-content">
-            <div className="algorithm-info">
-              <p className="algorithm-description">
-                This algorithm implementation is coming soon. Select Louvain from the navigation to see an interactive demo.
-              </p>
-            </div>
-            <GraphVisualizer />
-          </div>
-        );
-    }
+    // Le composant AlgorithmRenderer gère automatiquement les erreurs de chargement
+    // et affiche un message approprié si le fichier JSON n'existe pas
+    return <AlgorithmRenderer algorithmId={selectedAlgorithm} />;
   };
 
   return (

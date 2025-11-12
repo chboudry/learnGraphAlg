@@ -1,0 +1,316 @@
+{
+  "title": "Dijkstra Algorithm",
+  "steps": [
+    {
+      "name": "Initial State",
+      "description": "Initialize all distances to infinity except the source node. Set source distance to 0.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A (dist: 0)" }],
+          "color": "#4ecdc4"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B (dist: ∞)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C (dist: ∞)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D (dist: ∞)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E (dist: ∞)" }],
+          "color": "#888888"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "weight: 4" }]
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "weight: 2" }]
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "weight: 1" }]
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "weight: 5" }]
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "weight: 8" }]
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "weight: 10" }]
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "weight: 2" }]
+        }
+      ]
+    },
+    {
+      "name": "Process Node A",
+      "description": "Process source node A and update distances to its neighbors B and C.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A (visited)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B (dist: 4)" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C (dist: 2)" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D (dist: ∞)" }],
+          "color": "#888888"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E (dist: ∞)" }],
+          "color": "#888888"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "weight: 4" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "weight: 2" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "weight: 1" }]
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "weight: 5" }]
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "weight: 8" }]
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "weight: 10" }]
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "weight: 2" }]
+        }
+      ]
+    },
+    {
+      "name": "Process Node C",
+      "description": "Process node C (smallest unvisited distance) and update distances to its neighbors.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A (visited)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B (dist: 3)" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C (visited)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D (dist: 10)" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E (dist: 12)" }],
+          "color": "#f39c12"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "weight: 4" }]
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "weight: 2" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "weight: 1" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "weight: 5" }]
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "weight: 8" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "weight: 10" }],
+          "color": "#f39c12"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "weight: 2" }]
+        }
+      ]
+    },
+    {
+      "name": "Final Result",
+      "description": "All nodes processed. Shortest paths from A are established with optimal distances.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A (dist: 0)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B (dist: 3)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C (dist: 2)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D (dist: 8)" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E (dist: 10)" }],
+          "color": "#2ecc71"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "weight: 4" }]
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "weight: 2" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "weight: 1" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "weight: 5" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "weight: 8" }]
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "weight: 10" }],
+          "color": "#2ecc71"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "weight: 2" }],
+          "color": "#2ecc71"
+        }
+      ]
+    }
+  ]
+}

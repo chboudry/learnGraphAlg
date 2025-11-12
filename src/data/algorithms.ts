@@ -15,8 +15,8 @@ export const algorithmCategories: AlgorithmCategory[] = [
     id: 'pathfinding',
     name: 'Path Finding',
     algorithms: [
-      { id: 'dijkstra', name: 'Dijkstra', enabled: false },
-      { id: 'astar', name: 'A*', enabled: false },
+      { id: 'dijkstra', name: 'Dijkstra', enabled: true },
+      { id: 'astar', name: 'A*', enabled: true },
       { id: 'yens', name: "Yen's K-shortest paths", enabled: false },
       { id: 'allshortestpaths', name: 'All Shortest Paths', enabled: false },
     ],
@@ -29,14 +29,14 @@ export const algorithmCategories: AlgorithmCategory[] = [
       { id: 'closeness', name: 'Closeness Centrality', enabled: false },
       { id: 'degree', name: 'Degree Centrality', enabled: false },
       { id: 'eigenvector', name: 'Eigenvector Centrality', enabled: false },
-      { id: 'pagerank', name: 'PageRank', enabled: false },
+      { id: 'pagerank', name: 'PageRank', enabled: true },
     ],
   },
   {
     id: 'community',
     name: 'Community Detection',
     algorithms: [
-      { id: 'louvain', name: 'Louvain', enabled: true }, // Only enabled algorithm
+      { id: 'louvain', name: 'Louvain', enabled: true },
       { id: 'leiden', name: 'Leiden', enabled: false },
       { id: 'weakly-connected', name: 'Weakly Connected Components', enabled: false },
       { id: 'strongly-connected', name: 'Strongly Connected Components', enabled: false },

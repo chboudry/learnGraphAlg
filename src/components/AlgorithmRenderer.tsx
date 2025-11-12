@@ -1,47 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InteractiveNvlWrapper } from "@neo4j-nvl/react";
 import type { MouseEventCallbacks } from "@neo4j-nvl/react";
 import type { HitTargets, Node, Relationship } from "@neo4j-nvl/base";
+import type { LouvainGraphData } from "../types/graph";
+import { validateLouvainGraphData } from "../utils/graphDataLoader";
 
-const LouvainAlgorithm = () => {
+interface AlgorithmRendererProps {
+  algorithmId: string;
+}
+
+const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [timelineHeight, setTimelineHeight] = useState(350);
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [showProfile, setShowProfile] = useState(false);
-  
-  const [nodes] = useState<Node[]>([
-    { id: '0', captions: [{ value: 'Node A' }], color: '#ff6b6b' },
-    { id: '1', captions: [{ value: 'Node B' }], color: '#4ecdc4' },
-    { id: '2', captions: [{ value: 'Node C' }], color: '#f9ca24' },
-    { id: '3', captions: [{ value: 'Node D' }], color: '#e67e22' },
-    { id: '4', captions: [{ value: 'Node E' }], color: '#6c5ce7' }
-  ]);
-  
-  const [relationships] = useState<Relationship[]>([
-    { id: 'e1', from: '0', to: '1', captions: [{ value: 'connects' }] },
-    { id: 'e2', from: '1', to: '2', captions: [{ value: 'connects' }] },
-    { id: 'e3', from: '2', to: '3', captions: [{ value: 'connects' }] },
-    { id: 'e4', from: '3', to: '4', captions: [{ value: 'connects' }] },
-    { id: 'e5', from: '0', to: '3', captions: [{ value: 'connects' }] }
-  ]);
+  const [algorithmData, setAlgorithmData] = useState<LouvainGraphData | null>(null);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [relationships, setRelationships] = useState<Relationship[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  const algorithmSteps = [
-    "Initial Graph",
-    "Calculate Modularity", 
-    "Community Detection - Pass 1",
-    "Community Aggregation",
-    "Community Detection - Pass 2", 
-    "Final Communities"
-  ];
+  // Chargement dynamique des données d'algorithme
+  useEffect(() => {
+    const loadAlgorithmData = async () => {
+      setIsLoading(true);
+      setHasError(false);
+      
+      try {
+        // Import dynamique du fichier JSON basé sur l'algorithmId
+        const module = await import(`../data/${algorithmId}.json`);
+        const data = module.default as LouvainGraphData;
+        
+        // Validation des données
+        if (!validateLouvainGraphData(data)) {
+          console.error(`Les données de l'algorithme ${algorithmId} ne sont pas valides`);
+          setHasError(true);
+          setIsLoading(false);
+          return;
+        }
 
-  const stepDescriptions = [
-    "Initial graph where all nodes are in their own community. Each node is considered as a distinct community.",
-    "Calculate the modularity of the current graph to measure the quality of the community partition.",
-    "First pass: each node evaluates whether it should join a neighbor's community to improve modularity.",
-    "Aggregation of nodes belonging to the same community into super-nodes to create a new graph.",
-    "Second pass: apply community detection on the aggregated graph.",
-    "Final result with detected communities colored according to their membership."
-  ];
+        setAlgorithmData(data);
+        
+        // Initialiser avec la première étape
+        if (data.steps && data.steps.length > 0) {
+          setNodes(data.steps[0].nodes);
+          setRelationships(data.steps[0].relationships);
+        }
+        
+        // Reset de l'étape lors du changement d'algorithme
+        setCurrentStep(0);
+        setSelectedNode(null);
+        setShowProfile(false);
+        setIsLoading(false);
+        
+      } catch (error) {
+        console.error(`Erreur lors du chargement de l'algorithme ${algorithmId}:`, error);
+        setHasError(true);
+        setIsLoading(false);
+      }
+    };
+
+    loadAlgorithmData();
+  }, [algorithmId]);
+
+  // Mise à jour des données quand l'étape change
+  const handleStepChange = (newStep: number) => {
+    if (!algorithmData) return;
+    
+    setCurrentStep(newStep);
+    const newStepData = algorithmData.steps[newStep];
+    if (newStepData) {
+      setNodes(newStepData.nodes);
+      setRelationships(newStepData.relationships);
+    }
+  };
 
   // Callbacks d'événements souris pour l'interactivité
   const mouseEventCallbacks: MouseEventCallbacks = {
@@ -74,6 +106,61 @@ const LouvainAlgorithm = () => {
   };
 
   const detailsPanelWidth = (selectedNode || showProfile) ? 320 : 0; // Largeur panneau + marges
+
+  // Affichage de chargement ou d'erreur
+  if (isLoading) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: '280px',
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#242424',
+        color: '#ccc',
+        fontSize: '18px'
+      }}>
+        Chargement de l'algorithme {algorithmId}...
+      </div>
+    );
+  }
+
+  if (hasError || !algorithmData) {
+    return (
+      <div style={{
+        position: 'absolute',
+        top: 0,
+        left: '280px',
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#242424',
+        color: '#ccc',
+        textAlign: 'center',
+        padding: '40px'
+      }}>
+        <div style={{ fontSize: '24px', marginBottom: '16px' }}>
+          🚧 Algorithm under development
+        </div>
+        <div style={{ fontSize: '16px', marginBottom: '8px' }}>
+          The algorithm <strong>{algorithmId}</strong> is not yet implemented.
+        </div>
+        <div style={{ fontSize: '14px', color: '#aaa' }}>
+          Please select another algorithm from the navigation menu.
+        </div>
+      </div>
+    );
+  }
+
+  const algorithmTitle = algorithmData.title;
+  const algorithmSteps = algorithmData.steps.map(step => step.name);
+  const stepDescriptions = algorithmData.steps.map(step => step.description);
 
   return (
     <>
@@ -435,7 +522,7 @@ const LouvainAlgorithm = () => {
           marginLeft: '20px',
           textAlign: 'left'
         }}>
-          Louvain Algorithm
+          {algorithmTitle}
         </div>
 
         {/* Wizard Timeline Bar */}
@@ -474,7 +561,7 @@ const LouvainAlgorithm = () => {
               return (
                 <div
                   key={index}
-                  onClick={() => setCurrentStep(index)}
+                  onClick={() => handleStepChange(index)}
                   style={{
                     position: 'absolute',
                     top: '50%',
@@ -531,7 +618,7 @@ const LouvainAlgorithm = () => {
                   cursor: 'pointer',
                   transition: 'color 0.3s ease'
                 }}
-                onClick={() => setCurrentStep(index)}
+                onClick={() => handleStepChange(index)}
               >
                 {step.split(' - ')[0]} {/* Show only the first part of step name */}
               </div>
@@ -567,4 +654,4 @@ const LouvainAlgorithm = () => {
   );
 };
 
-export default LouvainAlgorithm;
+export default AlgorithmRenderer;
