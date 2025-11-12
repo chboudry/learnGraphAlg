@@ -28,7 +28,7 @@ const TimelinePanel = ({
   onVariantChange
 }: TimelinePanelProps) => {
 
-  const [showDescription, setShowDescription] = useState(true);
+  const [showDescription, setShowDescription] = useState(false);
   const algorithmSteps = algorithmData.steps.map(step => step.name);
   const stepDescriptions = algorithmData.steps.map(step => step.description);
 

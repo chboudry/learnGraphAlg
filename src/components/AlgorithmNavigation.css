@@ -173,26 +173,6 @@
   background: var(--ndl-text-disabled);
 }
 
-/* Light theme support */
-@media (prefers-color-scheme: light) {
-  .ndl-theme {
-    --ndl-primary-color: #0066cc;
-    --ndl-secondary-color: #00a8cc;
-    --ndl-text-primary: #1a1a1a;
-    --ndl-text-secondary: #666666;
-    --ndl-text-disabled: #999999;
-    --ndl-background-primary: #ffffff;
-    --ndl-background-secondary: #f5f5f5;
-    --ndl-border-color: #e0e0e0;
-    --ndl-hover-color: #f0f0f0;
-  }
-
-  .algorithm-navigation {
-    background-color: var(--ndl-background-primary);
-    border-right-color: var(--ndl-border-color);
-  }
-}
-
 /* Focus styles for accessibility */
 .category-header:focus,
 .algorithm-item:focus {

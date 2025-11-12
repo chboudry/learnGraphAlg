@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { InteractiveNvlWrapper } from "@neo4j-nvl/react";
 import type { MouseEventCallbacks } from "@neo4j-nvl/react";
 import type { HitTargets, Node, Relationship } from "@neo4j-nvl/base";
+import profileImage from "../assets/me.jpeg";
 
 interface GraphVisualizationProps {
   nodes: Node[];
@@ -129,7 +130,7 @@ const GraphVisualization = ({
       }}>
         <img 
           onClick={onShowProfile}
-          src="./src/assets/me.jpeg"
+          src={profileImage}
           alt="Charles Boudry"
           style={{
             width: '100%',
