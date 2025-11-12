@@ -1,4 +1,5 @@
 import type { Node } from "@neo4j-nvl/base";
+import profileImage from "../assets/me.jpeg";
 
 interface NodeDetailsPanelProps {
   selectedNode: Node | null;
@@ -85,7 +86,7 @@ const NodeDetailsPanel = ({
             }}>
               <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                 <img 
-                  src="./src/assets/me.jpeg"
+                  src={profileImage}
                   alt="Charles Boudry"
                   style={{
                     width: '80px',
