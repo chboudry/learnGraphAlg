@@ -19,11 +19,7 @@ function App() {
         selectedAlgorithm={selectedAlgorithm}
       />
       
-      <main className="main-content">
-        <div className="algorithm-container">
-            {renderAlgorithm()}
-        </div>
-      </main>
+      {renderAlgorithm()}
     </div>
   )
 }
