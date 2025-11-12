@@ -5,6 +5,7 @@ import { validateLouvainGraphData } from "../utils/graphDataLoader";
 import GraphVisualization from "./GraphVisualization";
 import NodeDetailsPanel from "./NodeDetailsPanel";
 import TimelinePanel from "./TimelinePanel";
+import { algorithmCategories, type AlgorithmVariant } from "../data/algorithms";
 
 interface AlgorithmRendererProps {
   algorithmId: string;
@@ -21,6 +22,8 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
   const [hasError, setHasError] = useState(false);
   const [timelinePanelWidth, setTimelinePanelWidth] = useState(800);
   const [isResizing, setIsResizing] = useState(false);
+  const [variants, setVariants] = useState<AlgorithmVariant[] | undefined>(undefined);
+  const [currentVariant, setCurrentVariant] = useState<string | undefined>(undefined);
 
   // Chargement dynamique des données d'algorithme avec HMR automatique
   useEffect(() => {
@@ -29,9 +32,41 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
       setHasError(false);
       
       try {
+        // Find algorithm metadata to check for variants
+        let algorithmMetadata = null;
+        for (const category of algorithmCategories) {
+          const found = category.algorithms.find(alg => alg.id === algorithmId);
+          if (found) {
+            algorithmMetadata = found;
+            break;
+          }
+        }
+
+        // Set variants and determine which file to load
+        let fileToLoad = algorithmId;
+        if (algorithmMetadata?.variants && algorithmMetadata.variants.length > 0) {
+          setVariants(algorithmMetadata.variants);
+          
+          // Find default variant or use first with file
+          const defaultVariant = algorithmMetadata.variants.find(v => v.default);
+          const firstWithFile = algorithmMetadata.variants.find(v => v.file);
+          const variantToUse = defaultVariant || firstWithFile;
+          
+          if (variantToUse) {
+            setCurrentVariant(variantToUse.id);
+            if (variantToUse.file) {
+              // Remove .json extension if present
+              fileToLoad = variantToUse.file.replace('.json', '');
+            }
+          }
+        } else {
+          setVariants(undefined);
+          setCurrentVariant(undefined);
+        }
+
         // Import dynamique du fichier JSON avec hot reloading
         // Le paramètre ?init rend le fichier JSON hot-reloadable dans Vite
-        const module = await import(`../data/${algorithmId}.json?init`);
+        const module = await import(`../data/${fileToLoad}.json?init`);
         const data = module.default as LouvainGraphData;
         
         // Validation des données
@@ -74,6 +109,44 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
   const handleStepChange = (newStep: number) => {
     if (algorithmData && newStep >= 0 && newStep < algorithmData.steps.length) {
       setCurrentStep(newStep);
+    }
+  };
+
+  const handleVariantChange = async (variantId: string) => {
+    if (!variants) return;
+    
+    const variant = variants.find(v => v.id === variantId);
+    if (!variant || !variant.file) return;
+
+    setCurrentVariant(variantId);
+    setIsLoading(true);
+    setHasError(false);
+
+    try {
+      const fileToLoad = variant.file.replace('.json', '');
+      const module = await import(`../data/${fileToLoad}.json?init`);
+      const data = module.default as LouvainGraphData;
+      
+      if (!validateLouvainGraphData(data)) {
+        console.error(`Les données de la variante ${variantId} ne sont pas valides`);
+        setHasError(true);
+        setIsLoading(false);
+        return;
+      }
+
+      setAlgorithmData(data);
+      
+      if (data.steps && data.steps.length > 0) {
+        setNodes(data.steps[0].nodes);
+        setRelationships(data.steps[0].relationships);
+      }
+
+      setCurrentStep(0);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(`Erreur lors du chargement de la variante ${variantId}:`, error);
+      setHasError(true);
+      setIsLoading(false);
     }
   };
 
@@ -188,6 +261,9 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
           currentStep={currentStep}
           onStepChange={handleStepChange}
           onTimelineResize={handleTimelineResize}
+          variants={variants}
+          currentVariant={currentVariant}
+          onVariantChange={handleVariantChange}
         />
         
         {/* Resize handle */}

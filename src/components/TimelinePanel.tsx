@@ -2,17 +2,30 @@ import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { LouvainGraphData } from "../types/graph";
 
+interface AlgorithmVariant {
+  id: string;
+  name: string;
+  file?: string;
+  default?: boolean;
+}
+
 interface TimelinePanelProps {
   algorithmData: LouvainGraphData;
   currentStep: number;
   onStepChange: (step: number) => void;
   onTimelineResize?: (height: number) => void;
+  variants?: AlgorithmVariant[];
+  currentVariant?: string;
+  onVariantChange?: (variantId: string) => void;
 }
 
 const TimelinePanel = ({ 
   algorithmData, 
   currentStep, 
-  onStepChange
+  onStepChange,
+  variants,
+  currentVariant,
+  onVariantChange
 }: TimelinePanelProps) => {
 
   const [showDescription, setShowDescription] = useState(true);
@@ -33,14 +46,51 @@ const TimelinePanel = ({
         padding: '20px',
         borderBottom: '1px solid #333'
       }}>
-        <h2 style={{
-          color: '#fff',
-          fontSize: '18px',
-          margin: '0',
-          fontWeight: 'bold'
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
-          {algorithmData.title}
-        </h2>
+          <h2 style={{
+            color: '#fff',
+            fontSize: '18px',
+            margin: '0',
+            fontWeight: 'bold'
+          }}>
+            {algorithmData.title}
+          </h2>
+          
+          {/* Variant selector */}
+          {variants && variants.length > 0 && (
+            <select
+              value={currentVariant || ''}
+              onChange={(e) => onVariantChange?.(e.target.value)}
+              style={{
+                background: '#333',
+                border: '1px solid #555',
+                color: '#fff',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '13px',
+                cursor: 'pointer',
+                outline: 'none'
+              }}
+            >
+              {variants.map((variant) => (
+                <option 
+                  key={variant.id} 
+                  value={variant.id}
+                  disabled={!variant.file}
+                  style={{
+                    color: variant.file ? '#fff' : '#666'
+                  }}
+                >
+                  {variant.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
 
       {/* Scrollable Content */}

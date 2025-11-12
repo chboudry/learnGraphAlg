@@ -1,3 +1,10 @@
+export interface AlgorithmVariant {
+  id: string;
+  name: string;
+  file?: string;
+  default?: boolean;
+}
+
 export interface AlgorithmCategory {
   id: string;
   name: string;
@@ -8,6 +15,7 @@ export interface Algorithm {
   id: string;
   name: string;
   enabled: boolean;
+  variants?: AlgorithmVariant[];
 }
 
 export const algorithmCategories: AlgorithmCategory[] = [
@@ -36,7 +44,23 @@ export const algorithmCategories: AlgorithmCategory[] = [
     id: 'community',
     name: 'Community Detection',
     algorithms: [
-      { id: 'louvain', name: 'Louvain', enabled: true },
+      { 
+        id: 'louvain', 
+        name: 'Louvain', 
+        enabled: true,
+        variants: [
+          { 
+            id: 'newman', 
+            name: 'Newman Modularity',
+            file: 'louvain.json',
+            default: true 
+          },
+          { 
+            id: 'leicht', 
+            name: 'Leicht Modularity'
+          }
+        ]
+      },
       { id: 'leiden', name: 'Leiden', enabled: false },
       { id: 'weakly-connected', name: 'Weakly Connected Components', enabled: false },
       { id: 'strongly-connected', name: 'Strongly Connected Components', enabled: false },
