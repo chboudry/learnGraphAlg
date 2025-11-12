@@ -103,26 +103,22 @@ const TimelinePanel = ({
         <div style={{
           marginBottom: '20px'
         }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            marginBottom: '10px'
-          }}>
-            <button
-              onClick={() => setShowDescription(!showDescription)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#666',
-                cursor: 'pointer',
-                fontSize: '12px',
-                padding: '0',
-                marginRight: '8px',
-                outline: 'none'
-              }}
-            >
+          <div 
+            onClick={() => setShowDescription(!showDescription)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '10px',
+              cursor: 'pointer'
+            }}
+          >
+            <span style={{
+              color: '#666',
+              fontSize: '12px',
+              marginRight: '8px'
+            }}>
               {showDescription ? '▼' : '▶'}
-            </button>
+            </span>
             <span style={{
               color: '#666',
               fontSize: '12px'
