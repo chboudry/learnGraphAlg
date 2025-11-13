@@ -69,13 +69,13 @@ export const algorithmCategories: AlgorithmCategory[] = [
         variants: [
           { 
             id: 'newman', 
-            name: 'Newman Modularity',
+            name: 'Newman-Girvan (Undirected) Modularity',
             file: 'louvain-newman.json',
             default: true 
           },
           { 
             id: 'leicht', 
-            name: 'Leicht Modularity'
+            name: 'Leicht-Newman (Directed) Modularity'
           }
         ]
       },

@@ -194,7 +194,7 @@ const GraphVisualization = ({
           color: 'white',
           fontSize: '18px'
         }}>
-          Aucun nœud à afficher
+          Nothing To Display
         </div>
       )}
     </div>

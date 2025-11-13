@@ -5,8 +5,269 @@
   "description": "The **Newman-Girvan modularity** (also called **Newman modularity**) [🔗](https://wikipedia.org/w/index.php?title=Modularity_(networks)) is a measure of the quality of a network partition into communities. It quantifies how well a network is divided into modules (communities) compared to a random network.\n\n### Formula:\n\n```\nQ = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n```\n\n**Where:**\n- `Aij` = adjacency matrix element (1 if edge exists between i and j, 0 otherwise)\n- `ki`, `kj` = degrees of nodes i and j\n- `m` = total number of edges in the network\n- `δ(ci, cj)` = 1 if nodes i and j are in the same community, 0 otherwise\n- Sum is over all pairs of nodes (i, j)\n\n### Interpretation:\n\n**For each node pair:**\n- **Aij**: Actual connection (1 if connected, 0 if not)\n- **ki × kj / (2m)**: Expected connection in a random network with same degree distribution\n- **Aij - ki × kj / (2m)**: Deviation from random expectation\n\n**Modularity Q:**\n- **Q > 0**: More edges within communities than expected by chance\n- **Q = 0**: Community structure no better than random\n- **Q < 0**: Fewer edges within communities than random (rare)\n- **Q ∈ [-0.5, 1]**: Theoretical range\n- **Q > 0.3**: Typically indicates significant community structure\n\n### Key Properties:\n\n- ✅ **Null model comparison**: Compares against configuration model (random graph with same degree sequence)\n- ✅ **Undirected networks only**: Designed specifically for undirected graphs\n- ✅ **Weighted networks**: Can be extended to weighted graphs by replacing Aij with edge weights\n- ✅ **Scale independent**: Normalized by total edge count\n- ✅ **Intuitive**: Higher Q means stronger community structure\n\n### Limitations:\n\n- ⚠️ **Not for directed graphs**: Does not account for edge directionality (use Leicht-Newman instead)\n- ⚠️ **Resolution limit**: May fail to detect small communities in large networks\n- ⚠️ **No absolute threshold**: \"Good\" Q value depends on network properties\n- ⚠️ **Optimization is NP-hard**: Finding partition that maximizes Q is computationally difficult\n- ⚠️ **Multiple optima**: Different partitions may have similar Q values\n\n### Applications:\n\n- Social network analysis\n- Biological networks (protein interactions, metabolic networks)\n- Citation networks\n- Infrastructure networks (power grids, internet topology)\n- Quality assessment for community detection algorithms (Louvain, Leiden, etc.)",
   "steps": [
     {
-      "name": "Graph with Communities",
-      "description": "**Example Network**: Two triangles connected by a bridge, partitioned into 2 communities.\n\n### Graph Structure:\n- **Nodes**: A, B, C, D, E, F (6 nodes)\n- **Edges**: 7 edges total (m = 7)\n- **Communities**: \n  - Community 1 (Blue): {A, B, C}\n  - Community 2 (Green): {D, E, F}\n\n### Node Degrees:\n- Node A: degree 2 (connected to B, C)\n- Node B: degree 2 (connected to A, C)\n- Node C: degree 3 (connected to A, B, D)\n- Node D: degree 3 (connected to C, E, F)\n- Node E: degree 2 (connected to D, F)\n- Node F: degree 2 (connected to D, E)\n\n### Edge Distribution:\n- **Within Community 1**: 3 edges (A-B, A-C, B-C)\n- **Within Community 2**: 3 edges (D-E, D-F, E-F)\n- **Between Communities**: 1 edge (C-D)\n\n### Adjacency Matrix (Aij):\n\n```\n    A  B  C  D  E  F\nA [ 0  1  1  0  0  0 ]\nB [ 1  0  1  0  0  0 ]\nC [ 1  1  0  1  0  0 ]\nD [ 0  0  1  0  1  1 ]\nE [ 0  0  0  1  0  1 ]\nF [ 0  0  0  1  1  0 ]\n```\n\nWhere Aij = 1 if edge exists between nodes i and j, 0 otherwise. The matrix is symmetric for undirected graphs.\n\n### Newman-Girvan Modularity Calculation:\n\n**Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n\n**Important**: The sum is over **ALL pairs** of nodes (i, j) in the same community, including non-connected pairs and self-loops.\n\n**Step 1: Calculate for ALL node pairs in same community**\n\nOnly pairs where δ(ci, cj) = 1 contribute to the sum.\n\n**Community 1 (A, B, C) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- A-B: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- A-C: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- B-A: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- B-C: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- C-A: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- C-B: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n\nSelf-loops (Aij = 0):\n- A-A: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- B-B: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- C-C: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n\n**Community 1 sum**: 0.714 + 0.571 + 0.714 + 0.571 + 0.571 + 0.571 - 0.286 - 0.286 - 0.643 = **2.497**\n\n**Community 2 (D, E, F) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- D-E: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- D-F: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- E-D: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- E-F: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- F-D: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- F-E: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n\nSelf-loops (Aij = 0):\n- D-D: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n- E-E: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- F-F: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n\n**Community 2 sum**: 0.571 + 0.571 + 0.571 + 0.714 + 0.571 + 0.714 - 0.643 - 0.286 - 0.286 = **2.497**\n\n**Step 2: Sum all contributions**\n\nΣ[Aij - (ki × kj)/(2m)] δ(ci, cj) = 2.497 + 2.497 = **4.994**\n\n**Step 3: Normalize by 2m**\n\nQ = 4.994 / (2×7) = 4.994 / 14 = **0.357**\n\n### Result:\n\n**Modularity Q = 0.357**\n\nThis indicates a good community structure. The value is positive and above 0.3, meaning there are significantly more edges within communities than expected by chance in a random network with the same degree distribution.\n\n### Interpretation:\n\n- **Q = 0.357**: Good community structure (> 0.3 threshold)\n- **Within-community edges**: 6 out of 7 edges (85.7%)\n- **Between-community edges**: 1 out of 7 edges (14.3%)\n- The single bridge edge (C-D) reduces modularity from what would be perfect separation\n- If C-D edge didn't exist, Q would be higher (~0.5)\n\n### 📝 Note:\n**Visualization**: Edges appear bidirectional because the visualization library cannot display undirected relationships without arrows. Each relationship is duplicated in both directions for display purposes only. In the calculation, **each edge is counted as 1** (m=7, not 14).",
+      "name": "Overview",
+      "description": "## Modularity: Measuring Community Quality\n\nThis demonstration shows how **Newman-Girvan modularity** evaluates different community partitions to find the best division of a network.\n\n### Our Test Network:\n\n**Structure**: Two triangles connected by a bridge\n- **Nodes**: A, B, C, D, E, F (6 nodes)\n- **Edges**: 7 edges total (A-B, A-C, B-C, C-D, D-E, D-F, E-F)\n- **Natural Structure**: Left triangle {A,B,C} + Right triangle {D,E,F} + Bridge (C-D)\n\n### Our Approach:\n\n1. **Start with this test network**: 6 nodes, 7 edges (shown below)\n2. **Try different community splits**: Compare random vs. intuitive partitions\n3. **Calculate modularity for each**: Use Q formula to measure quality\n4. **Choose the best partition**: Higher Q = better community structure\n\n### Key Insight:\n\nModularity **Q** measures how much better a partition is compared to random chance. We'll see that intuitive community boundaries (grouping triangles together) give higher Q than arbitrary splits.\n\n---\n\n**Ready to explore?** Let's test different ways to divide our network and see which one modularity prefers!",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | deg:3" }],
+          "color": "#666666"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:3" }],
+          "color": "#666666"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:2" }],
+          "color": "#666666"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DF",
+          "from": "D",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#666666"
+        }
+      ]
+    },
+    {
+      "name": "Random Split (Poor Communities)",
+      "description": "**Example Network**: Two triangles connected by a bridge, with a **random partition** to demonstrate poor community structure.\n\n### Graph Structure:\n- **Nodes**: A, B, C, D, E, F (6 nodes)\n- **Edges**: 7 edges total (m = 7)\n- **Communities**: \n  - Community 1 (Blue): {A, C, E} - scattered nodes\n  - Community 2 (Orange): {B, D, F} - scattered nodes\n\n### Node Degrees:\n- Node A: degree 2 (connected to B, C)\n- Node B: degree 2 (connected to A, C)\n- Node C: degree 3 (connected to A, B, D)\n- Node D: degree 3 (connected to C, E, F)\n- Node E: degree 2 (connected to D, F)\n- Node F: degree 2 (connected to D, E)\n\n### Edge Distribution:\n- **Within Community 1**: 1 edge (A-C)\n- **Within Community 2**: 1 edge (D-F)\n- **Between Communities**: 5 edges (A-B, B-C, C-D, D-E, E-F)\n\n### Adjacency Matrix (Aij):\n\n```\n    A  B  C  D  E  F\nA [ 0  1  1  0  0  0 ]\nB [ 1  0  1  0  0  0 ]\nC [ 1  1  0  1  0  0 ]\nD [ 0  0  1  0  1  1 ]\nE [ 0  0  0  1  0  1 ]\nF [ 0  0  0  1  1  0 ]\n```\n\nWhere Aij = 1 if edge exists between nodes i and j, 0 otherwise. The matrix is symmetric for undirected graphs.\n\n### Newman-Girvan Modularity Calculation:\n\n**Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n\n**Important**: The sum is over **ALL pairs** of nodes (i, j) in the same community, including non-connected pairs and self-loops.\n\n**Step 1: Calculate for ALL node pairs in same community**\n\nOnly pairs where δ(ci, cj) = 1 contribute to the sum.\n\n**Community 1 (A, C, E) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- A-C: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- C-A: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n\nNon-connected pairs (Aij = 0):\n- A-E: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- E-A: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- C-E: Aij=0, (3×2)/(2×7) = 0.429 → contribution: 0 - 0.429 = -0.429\n- E-C: Aij=0, (2×3)/(2×7) = 0.429 → contribution: 0 - 0.429 = -0.429\n\nSelf-loops (Aij = 0):\n- A-A: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- C-C: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n- E-E: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n\n**Community 1 sum**: 0.571 + 0.571 - 0.286 - 0.286 - 0.429 - 0.429 - 0.286 - 0.643 - 0.286 = **-1.503**\n\n**Community 2 (B, D, F) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- D-F: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- F-D: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n\nNon-connected pairs (Aij = 0):\n- B-D: Aij=0, (2×3)/(2×7) = 0.429 → contribution: 0 - 0.429 = -0.429\n- D-B: Aij=0, (3×2)/(2×7) = 0.429 → contribution: 0 - 0.429 = -0.429\n- B-F: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- F-B: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n\nSelf-loops (Aij = 0):\n- B-B: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- D-D: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n- F-F: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n\n**Community 2 sum**: 0.571 + 0.571 - 0.429 - 0.429 - 0.286 - 0.286 - 0.286 - 0.643 - 0.286 = **-1.503**\n\n**Step 2: Sum all contributions**\n\nΣ[Aij - (ki × kj)/(2m)] δ(ci, cj) = -1.503 + (-1.503) = **-3.006**\n\n**Step 3: Normalize by 2m**\n\nQ = -3.006 / (2×7) = -3.006 / 14 = **-0.215**\n\n### Result:\n\n**Modularity Q = -0.215**\n\nThis indicates a **poor community structure**. The negative value means this partition is **worse than random**.\n\n### Interpretation:\n\n- **Q = -0.215**: Poor community structure (negative value)\n- **Within-community edges**: Only 2 out of 7 edges (28.6%)\n- **Between-community edges**: 5 out of 7 edges (71.4%)\n- Most connections cross community boundaries, violating community structure principles\n- The random assignment ignores the natural triangle formations\n\n### 📝 Note:\n**Visualization**: Edges appear bidirectional because the visualization library cannot display undirected relationships without arrows. Each relationship is duplicated in both directions for display purposes only. In the calculation, **each edge is counted as 1** (m=7, not 14).",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:2" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:3" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:2" }],
+          "color": "#ff9800"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DF",
+          "from": "D",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        }
+      ]
+    },
+    {
+      "name": "Intuitive Split (Good Communities)",
+      "description": "**Example Network**: Two triangles connected by a bridge, partitioned into 2 communities based on **natural structure**.\n\n### Graph Structure:\n- **Nodes**: A, B, C, D, E, F (6 nodes)\n- **Edges**: 7 edges total (m = 7)\n- **Communities**: \n  - Community 1 (Blue): {A, B, C} - left triangle\n  - Community 2 (Green): {D, E, F} - right triangle\n\n### Node Degrees:\n- Node A: degree 2 (connected to B, C)\n- Node B: degree 2 (connected to A, C)\n- Node C: degree 3 (connected to A, B, D)\n- Node D: degree 3 (connected to C, E, F)\n- Node E: degree 2 (connected to D, F)\n- Node F: degree 2 (connected to D, E)\n\n### Edge Distribution:\n- **Within Community 1**: 3 edges (A-B, A-C, B-C)\n- **Within Community 2**: 3 edges (D-E, D-F, E-F)\n- **Between Communities**: 1 edge (C-D)\n\n### Adjacency Matrix (Aij):\n\n```\n    A  B  C  D  E  F\nA [ 0  1  1  0  0  0 ]\nB [ 1  0  1  0  0  0 ]\nC [ 1  1  0  1  0  0 ]\nD [ 0  0  1  0  1  1 ]\nE [ 0  0  0  1  0  1 ]\nF [ 0  0  0  1  1  0 ]\n```\n\nWhere Aij = 1 if edge exists between nodes i and j, 0 otherwise. The matrix is symmetric for undirected graphs.\n\n### Newman-Girvan Modularity Calculation:\n\n**Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n\n**Important**: The sum is over **ALL pairs** of nodes (i, j) in the same community, including non-connected pairs and self-loops.\n\n**Step 1: Calculate for ALL node pairs in same community**\n\nOnly pairs where δ(ci, cj) = 1 contribute to the sum.\n\n**Community 1 (A, B, C) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- A-B: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- A-C: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- B-A: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- B-C: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- C-A: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- C-B: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n\nSelf-loops (Aij = 0):\n- A-A: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- B-B: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- C-C: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n\n**Community 1 sum**: 0.714 + 0.571 + 0.714 + 0.571 + 0.571 + 0.571 - 0.286 - 0.286 - 0.643 = **2.497**\n\n**Community 2 (D, E, F) - All 9 pairs (including self-loops):**\n\nConnected pairs (Aij = 1):\n- D-E: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- D-F: Aij=1, (3×2)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- E-D: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- E-F: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n- F-D: Aij=1, (2×3)/(2×7) = 0.429 → contribution: 1 - 0.429 = 0.571\n- F-E: Aij=1, (2×2)/(2×7) = 0.286 → contribution: 1 - 0.286 = 0.714\n\nSelf-loops (Aij = 0):\n- D-D: Aij=0, (3×3)/(2×7) = 0.643 → contribution: 0 - 0.643 = -0.643\n- E-E: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n- F-F: Aij=0, (2×2)/(2×7) = 0.286 → contribution: 0 - 0.286 = -0.286\n\n**Community 2 sum**: 0.571 + 0.571 + 0.571 + 0.714 + 0.571 + 0.714 - 0.643 - 0.286 - 0.286 = **2.497**\n\n**Step 2: Sum all contributions**\n\nΣ[Aij - (ki × kj)/(2m)] δ(ci, cj) = 2.497 + 2.497 = **4.994**\n\n**Step 3: Normalize by 2m**\n\nQ = 4.994 / (2×7) = 4.994 / 14 = **0.357**\n\n### Result:\n\n**Modularity Q = 0.357**\n\nThis indicates a **good community structure**. The value is positive and above 0.3, meaning there are significantly more edges within communities than expected by chance in a random network with the same degree distribution.\n\n### Interpretation:\n\n- **Q = 0.357**: Good community structure (> 0.3 threshold)\n- **Within-community edges**: 6 out of 7 edges (85.7%)\n- **Between-community edges**: 1 out of 7 edges (14.3%)\n- The single bridge edge (C-D) reduces modularity from what would be perfect separation\n- If C-D edge didn't exist, Q would be higher (~0.5)\n- This partition respects the natural triangle formations in the network\n\n### 📝 Note:\n**Visualization**: Edges appear bidirectional because the visualization library cannot display undirected relationships without arrows. Each relationship is duplicated in both directions for display purposes only. In the calculation, **each edge is counted as 1** (m=7, not 14).",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:3" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:2" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:2" }],
+          "color": "#4caf50"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "bridge" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "DF",
+          "from": "D",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        }
+      ]
+    },
+    {
+      "name": "Conclusion: Modularity Comparison",
+      "description": "## Modularity Comparison Results\n\n### Community Quality Assessment:\n\n**Partition Performance Summary:**\n\n🔸 **Random Split (Poor Performance)**\n- **Q Value**: -0.215\n- **Interpretation**: ❌ Worse than random\n- **Edge Distribution**: 5 cross-boundary, 2 within communities\n- **Community Quality**: Poor (negative modularity)\n\n🔸 **Intuitive Split (Excellent Performance)**\n- **Q Value**: +0.357\n- **Interpretation**: ✅ Strong communities\n- **Edge Distribution**: 1 cross-boundary, 6 within communities\n- **Community Quality**: Excellent (>0.3 threshold)\n\n**Overall Improvement**: **+0.572** modularity difference shows dramatic improvement!\n\n### Key Insights:\n\n**1. Modularity as Quality Metric:**\n- Negative Q (-0.215) = Poor partition, worse than random\n- Positive Q (+0.357) = Good partition, much better than random\n- The **0.572 difference** shows dramatic improvement!\n\n**2. Edge Distribution Matters:**\n- Random split: 71% edges cross communities (5/7)\n- Intuitive split: 14% edges cross communities (1/7)\n- **Minimizing cross-boundary edges** maximizes modularity\n\n**3. Natural Structure Recognition:**\n- Triangle formations create strong internal connectivity\n- Bridge edges (C-D) naturally separate communities\n- **Modularity rewards** partitions that respect network topology\n\n### Practical Applications:\n\n**Community Detection Algorithms:**\n- Louvain algorithm maximizes modularity iteratively\n- Leiden algorithm improves upon Louvain's modularity optimization\n- FastGreedy, Walktrap also use modularity-based optimization\n\n**Real-World Usage:**\n- Social networks: Friend groups, professional clusters\n- Biology: Protein complexes, metabolic pathways\n- Internet: Autonomous systems, web communities\n- Citations: Research topic clusters",
       "nodes": [
         {
           "id": "A",
