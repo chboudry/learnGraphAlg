@@ -45,6 +45,24 @@ export const algorithmCategories: AlgorithmCategory[] = [
     name: 'Community Detection',
     algorithms: [
       { 
+        id: 'modularity', 
+        name: 'Modularity', 
+        enabled: true,
+        variants: [
+          { 
+            id: 'newman', 
+            name: 'Newman-Girvan (Undirected)',
+            file: 'modularity-newman.json',
+            default: true 
+          },
+          { 
+            id: 'leicht', 
+            name: 'Leicht-Newman (Directed)',
+            file: 'modularity-leicht.json'
+          }
+        ]
+      },
+      { 
         id: 'louvain', 
         name: 'Louvain', 
         enabled: true,

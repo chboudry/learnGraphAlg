@@ -1,0 +1,95 @@
+{
+  "title": "Modularity",
+  "category": "Community Detection",
+  "directed": true,
+  "description": "The **Leicht-Newman modularity** [🔗](https://arxiv.org/pdf/0709.4500) is an extension of the Newman-Girvan modularity designed specifically for **directed networks**. It accounts for both in-degree and out-degree when computing the expected number of edges in the null model.\n\n### Formula:\n\n```\nQ = 1/m Σ[Aij - (ki^out × kj^in)/m] δ(ci, cj)\n```\n\n**Where:**\n- `Aij` = adjacency matrix element (1 if directed edge from i to j exists, 0 otherwise)\n- `ki^out` = out-degree of node i (number of outgoing edges)\n- `kj^in` = in-degree of node j (number of incoming edges)\n- `m` = total number of directed edges in the network\n- `δ(ci, cj)` = 1 if nodes i and j are in the same community, 0 otherwise\n- Sum is over all ordered pairs of nodes (i, j)\n\n### Key Differences from Newman-Girvan:\n\n**Newman-Girvan (Undirected)**:\n- Uses total degree: `ki × kj / (2m)`\n- Normalizes by `1/(2m)` (each edge counted twice)\n- Symmetric: A-B same as B-A\n\n**Leicht-Newman (Directed)**:\n- Uses out-degree and in-degree: `ki^out × kj^in / m`\n- Normalizes by `1/m` (each edge counted once)\n- Asymmetric: i→j different from j→i\n\n### Interpretation:\n\n**For each ordered node pair (i → j):**\n- **Aij**: Actual directed edge (1 if i→j exists, 0 if not)\n- **ki^out × kj^in / m**: Expected edge in random directed network\n- The expectation accounts for:\n  - Node i's tendency to send edges (out-degree)\n  - Node j's tendency to receive edges (in-degree)\n\n**Modularity Q:**\n- **Q > 0**: More edges within communities than expected\n- **Q = 0**: Community structure no better than random\n- **Q < 0**: Fewer edges within communities than random\n- **Q ∈ [-1, 1]**: Theoretical range\n- **Q > 0.3**: Typically indicates significant community structure\n\n### Key Properties:\n\n- ✅ **Directed networks**: Specifically designed for directed graphs\n- ✅ **Asymmetric null model**: Accounts for separate in/out degree distributions\n- ✅ **Weighted networks**: Can be extended to weighted directed graphs\n- ✅ **Direction-aware**: Distinguishes between i→j and j→i\n- ✅ **Hub detection**: Captures directed hub structure (high in-degree or out-degree nodes)\n\n### Limitations:\n\n- ⚠️ **Not for undirected graphs**: Use Newman-Girvan for undirected networks\n- ⚠️ **Resolution limit**: Same as Newman-Girvan, may miss small communities\n- ⚠️ **Computational complexity**: More expensive than undirected version\n- ⚠️ **Reciprocity not explicit**: Doesn't distinguish between reciprocal and one-way edges\n- ⚠️ **Optimization difficulty**: Finding optimal partition is NP-hard\n\n### Applications:\n\n- Social networks (Twitter, citations with directionality)\n- Web graph (hyperlink structure)\n- Biological networks (gene regulatory networks, neural networks)\n- Communication networks (email, message flow)\n- Transaction networks (money flow, trade networks)",
+  "steps": [
+    {
+      "name": "Directed Graph with Communities",
+      "description": "**Example Network**: Two directed triangles connected by a bridge, partitioned into 2 communities.\n\n### Graph Structure:\n- **Nodes**: A, B, C, D, E, F (6 nodes)\n- **Directed Edges**: 7 edges total (m = 7)\n- **Communities**: \n  - Community 1 (Blue): {A, B, C}\n  - Community 2 (Green): {D, E, F}\n\n### Node Degrees:\n\n**Out-degrees (k^out):**\n- A: 1 (A→B)\n- B: 1 (B→C)\n- C: 2 (C→A, C→D)\n- D: 1 (D→E)\n- E: 1 (E→F)\n- F: 1 (F→D)\n\n**In-degrees (k^in):**\n- A: 1 (C→A)\n- B: 1 (A→B)\n- C: 1 (B→C)\n- D: 2 (C→D, F→D)\n- E: 1 (D→E)\n- F: 1 (E→F)\n\n### Edge Distribution:\n- **Within Community 1**: 3 edges (A→B, B→C, C→A)\n- **Within Community 2**: 3 edges (D→E, E→F, F→D)\n- **Between Communities**: 1 edge (C→D)\n\n### Leicht-Newman Modularity Calculation:\n\n**Formula**: Q = 1/m Σ[Aij - (ki^out × kj^in)/m] δ(ci, cj)\n\n**Important**: The sum is over **ALL ordered pairs** (i, j) in the same community, including self-loops.\n\n**Step 1: Calculate for ALL ordered pairs in same community**\n\nOnly pairs where δ(ci, cj) = 1 contribute to the sum.\n\n**Community 1 (A, B, C) - All 9 ordered pairs:**\n\nExisting edges (Aij = 1):\n- A→B: Aij=1, k_A^out=1, k_B^in=1 → (1×1)/7 = 0.143 → contribution: 1 - 0.143 = 0.857\n- B→C: Aij=1, k_B^out=1, k_C^in=1 → (1×1)/7 = 0.143 → contribution: 1 - 0.143 = 0.857\n- C→A: Aij=1, k_C^out=2, k_A^in=1 → (2×1)/7 = 0.286 → contribution: 1 - 0.286 = 0.714\n\nNon-existing edges (Aij = 0):\n- A→A: Aij=0, k_A^out=1, k_A^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- A→C: Aij=0, k_A^out=1, k_C^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- B→A: Aij=0, k_B^out=1, k_A^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- B→B: Aij=0, k_B^out=1, k_B^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- C→B: Aij=0, k_C^out=2, k_B^in=1 → (2×1)/7 = 0.286 → contribution: 0 - 0.286 = -0.286\n- C→C: Aij=0, k_C^out=2, k_C^in=1 → (2×1)/7 = 0.286 → contribution: 0 - 0.286 = -0.286\n\n**Community 1 sum**: 0.857 + 0.857 + 0.714 - 0.143 - 0.143 - 0.143 - 0.143 - 0.286 - 0.286 = **1.284**\n\n**Community 2 (D, E, F) - All 9 ordered pairs:**\n\nExisting edges (Aij = 1):\n- D→E: Aij=1, k_D^out=1, k_E^in=1 → (1×1)/7 = 0.143 → contribution: 1 - 0.143 = 0.857\n- E→F: Aij=1, k_E^out=1, k_F^in=1 → (1×1)/7 = 0.143 → contribution: 1 - 0.143 = 0.857\n- F→D: Aij=1, k_F^out=1, k_D^in=2 → (1×2)/7 = 0.286 → contribution: 1 - 0.286 = 0.714\n\nNon-existing edges (Aij = 0):\n- D→D: Aij=0, k_D^out=1, k_D^in=2 → (1×2)/7 = 0.286 → contribution: 0 - 0.286 = -0.286\n- D→F: Aij=0, k_D^out=1, k_F^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- E→D: Aij=0, k_E^out=1, k_D^in=2 → (1×2)/7 = 0.286 → contribution: 0 - 0.286 = -0.286\n- E→E: Aij=0, k_E^out=1, k_E^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- F→E: Aij=0, k_F^out=1, k_E^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n- F→F: Aij=0, k_F^out=1, k_F^in=1 → (1×1)/7 = 0.143 → contribution: 0 - 0.143 = -0.143\n\n**Community 2 sum**: 0.857 + 0.857 + 0.714 - 0.286 - 0.143 - 0.286 - 0.143 - 0.143 - 0.143 = **1.284**\n\n**Step 2: Sum all contributions**\n\nΣ[Aij - (ki^out × kj^in)/m] δ(ci, cj) = 1.284 + 1.284 = **2.568**\n\n**Step 3: Normalize by m**\n\nQ = 2.568 / 7 = **0.367**\n\n### Result:\n\n**Modularity Q = 0.367**\n\nThis indicates a **good community structure** in the directed network. The value is above 0.3, suggesting clear community separation.\n\n### Interpretation:\n\n- **Q = 0.367**: Good directed community structure (> 0.3 threshold)\n- **Within-community edges**: 6 out of 7 edges (85.7%)\n- **Between-community edges**: 1 out of 7 edges (14.3%)\n- Both communities form directed patterns: cycle A→B→C→A and clique-like D→E→F with F→D\n- The single bridge edge (C→D) creates directed flow between communities\n- Similar to Newman-Girvan result (Q ≈ 0.357), showing consistent community structure\n\n### Comparison with Newman-Girvan:\n\nBoth measures detect similar community quality (Leicht-Newman Q = 0.367 vs Newman-Girvan Q ≈ 0.357), confirming the strong community structure in this network regardless of whether we consider edge directionality.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | in:1 out:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | in:1 out:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | in:1 out:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | in:2 out:2" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | in:1 out:1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | in:1 out:1" }],
+          "color": "#4caf50"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AB",
+          "from": "A",
+          "to": "B",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "BC",
+          "from": "B",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "CA",
+          "from": "C",
+          "to": "A",
+          "captions": [{ "value": "w:1" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "CD",
+          "from": "C",
+          "to": "D",
+          "captions": [{ "value": "w:1" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "FD",
+          "from": "F",
+          "to": "D",
+          "captions": [{ "value": "w:1" }],
+          "color": "#4caf50"
+        }
+      ]
+    }
+  ]
+}
