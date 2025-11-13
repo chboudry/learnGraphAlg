@@ -7,6 +7,7 @@ import profileImage from "../assets/me.jpeg";
 interface GraphVisualizationProps {
   nodes: Node[];
   relationships: Relationship[];
+  directed?: boolean;
   onNodeClick?: (node: Node) => void;
   onNodeDoubleClick?: (node: Node) => void;
   onShowProfile: () => void;
@@ -15,7 +16,8 @@ interface GraphVisualizationProps {
 
 const GraphVisualization = ({ 
   nodes, 
-  relationships, 
+  relationships,
+  directed = true,
   onNodeClick, 
   onNodeDoubleClick,
   onShowProfile,
@@ -159,10 +161,23 @@ const GraphVisualization = ({
               ...node,
               size: node.size ? node.size * 1.5 : 60
             }))}
-            rels={relationships.map(rel => ({
-              ...rel,
-              color: rel.color || '#666666'
-            }))}
+            rels={
+              directed 
+                ? relationships.map(rel => ({
+                    ...rel,
+                    color: rel.color || '#666666'
+                  }))
+                : relationships.flatMap(rel => [
+                    { ...rel, color: rel.color || '#666666' },
+                    { 
+                      ...rel, 
+                      id: `${rel.id}_rev`, 
+                      from: rel.to, 
+                      to: rel.from,
+                      color: rel.color || '#666666'
+                    }
+                  ])
+            }
             mouseEventCallbacks={mouseEventCallbacks}
             nvlOptions={{
               renderer: 'canvas',

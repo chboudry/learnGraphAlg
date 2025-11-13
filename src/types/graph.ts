@@ -16,5 +16,6 @@ export interface LouvainGraphData {
   title: string;
   category: string;
   description: string;
+  directed?: boolean;
   steps: AlgorithmStep[];
 }

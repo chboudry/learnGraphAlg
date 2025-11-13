@@ -307,6 +307,7 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
           key={`graph-${timelinePanelWidth}`}
           nodes={nodes}
           relationships={relationships}
+          directed={algorithmData?.directed ?? true}
           onNodeClick={handleNodeClick}
           onNodeDoubleClick={handleNodeDoubleClick}
           onShowProfile={handleShowProfile}
