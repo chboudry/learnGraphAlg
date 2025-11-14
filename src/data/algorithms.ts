@@ -50,15 +50,20 @@ export const algorithmCategories: AlgorithmCategory[] = [
         enabled: true,
         variants: [
           { 
-            id: 'newman', 
+            id: 'newman-simple', 
             name: 'Newman-Girvan (Undirected)',
             file: 'modularity-newman.json',
             default: true 
           },
           { 
-            id: 'leicht', 
+            id: 'leicht-simple', 
             name: 'Leicht-Newman (Directed)',
             file: 'modularity-leicht.json'
+          },
+          { 
+            id: 'modularity-comparison', 
+            name: 'Newman-Girvan / Leicht-Newman',
+            file: 'modularity-comparison.json'
           }
         ]
       },
@@ -68,14 +73,15 @@ export const algorithmCategories: AlgorithmCategory[] = [
         enabled: true,
         variants: [
           { 
-            id: 'newman', 
-            name: 'Newman-Girvan (Undirected) Modularity',
-            file: 'louvain-newman.json',
+            id: 'newman-short', 
+            name: 'Newman-Girvan (Undirected) Modularity - triangles example',
+            file: 'louvain-newman-triangles.json',
             default: true 
           },
           { 
-            id: 'leicht', 
-            name: 'Leicht-Newman (Directed) Modularity'
+            id: 'newman-random', 
+            name: 'Newman-Girvan (Undirected) Modularity - random example',
+            file: 'louvain-newman-random.json'
           }
         ]
       },

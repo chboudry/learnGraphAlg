@@ -44,13 +44,21 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
 
         // Set variants and determine which file to load
         let fileToLoad = algorithmId;
+        console.log('Debug: Loading algorithm:', algorithmId);
+        console.log('Debug: Algorithm metadata:', algorithmMetadata);
+        
         if (algorithmMetadata?.variants && algorithmMetadata.variants.length > 0) {
           setVariants(algorithmMetadata.variants);
+          console.log('Debug: Variants found:', algorithmMetadata.variants);
           
           // Find default variant or use first with file
           const defaultVariant = algorithmMetadata.variants.find(v => v.default);
           const firstWithFile = algorithmMetadata.variants.find(v => v.file);
           const variantToUse = defaultVariant || firstWithFile;
+          
+          console.log('Debug: Default variant:', defaultVariant);
+          console.log('Debug: First with file:', firstWithFile);
+          console.log('Debug: Variant to use:', variantToUse);
           
           if (variantToUse) {
             setCurrentVariant(variantToUse.id);
@@ -63,30 +71,41 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
           setVariants(undefined);
           setCurrentVariant(undefined);
         }
+        
+        console.log('Debug: Final file to load:', fileToLoad);
 
         // Import dynamique du fichier JSON avec hot reloading
         // Le paramètre ?init rend le fichier JSON hot-reloadable dans Vite
+        console.log('Debug: Attempting to import:', `../data/${fileToLoad}.json?init`);
         const module = await import(`../data/${fileToLoad}.json?init`);
         const data = module.default as LouvainGraphData;
+        console.log('Debug: Loaded data:', data);
         
         // Validation des données
-        if (!validateLouvainGraphData(data)) {
+        console.log('Debug: Validating data...');
+        const isValid = validateLouvainGraphData(data);
+        console.log('Debug: Data validation result:', isValid);
+        if (!isValid) {
           console.error(`Les données de l'algorithme ${algorithmId} ne sont pas valides`);
           setHasError(true);
           setIsLoading(false);
           return;
         }
 
+        console.log('Debug: Setting algorithm data...');
         setAlgorithmData(data);
         
         // Initialiser avec la première étape
         if (data.steps && data.steps.length > 0) {
+          console.log('Debug: Setting initial step data, steps count:', data.steps.length);
+          console.log('Debug: First step nodes:', data.steps[0].nodes);
+          console.log('Debug: First step relationships:', data.steps[0].relationships);
           setNodes(data.steps[0].nodes);
           setRelationships(data.steps[0].relationships);
-
         }
 
         setCurrentStep(0);
+        console.log('Debug: Loading completed successfully');
         setIsLoading(false);
       } catch (error) {
         console.error(`Erreur lors du chargement de l'algorithme ${algorithmId}:`, error);
@@ -232,9 +251,9 @@ const AlgorithmRenderer = ({ algorithmId }: AlgorithmRendererProps) => {
         color: '#ff6b6b'
       }}>
         <div>
-          <h2>Erreur de chargement</h2>
-          <p>Impossible de charger l'algorithme: {algorithmId}</p>
-          <p>Vérifiez que le fichier JSON existe et est valide.</p>
+          <h2>Loading Error</h2>
+          <p>Unable to load algorithm: {algorithmId}</p>
+          <p>Please verify that the JSON file exists and is valid.</p>
         </div>
       </div>
     );

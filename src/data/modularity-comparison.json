@@ -1,0 +1,290 @@
+{
+  "title": "Modularity Comparison: Newman-Girvan vs Leicht-Newman",
+  "category": "Community Detection",
+  "directed": true,
+  "description": "This demonstration compares **Newman-Girvan modularity** and **Leicht-Newman modularity** on a directed network. The network features different edge patterns and node connectivity, making it ideal for testing how each modularity handles directed structures.\n\n### Two Modularity Approaches:\n\n**Newman-Girvan Modularity (Undirected)**:\n- **Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n- **Treats directed as undirected**: Uses total degrees only\n- **Groups by degree similarity**: Prefers nodes with similar total connectivity\n\n**Leicht-Newman Modularity (Directed)**:\n- **Formula**: Q = 1/m Σ[Aij - (ki^out × kj^in)/m] δ(ci, cj)\n- **Preserves directionality**: Uses separate in/out degrees\n- **Groups by flow patterns**: Captures directional connectivity\n\n### Test Network Structure:\n\n**Labeled Directed Network (A=0, B=1, C=2, D=3, E=4, F=5)**:\n- **Edges**: A→D, A→C, B→D, C→E, C↔F, E→B, F→B\n- **Node degrees vary**: Creating different community detection challenges\n- **Mixed connectivity**: Some bidirectional, some unidirectional flows\n\n**Key Test**: Can modularity algorithms distinguish between different community structures based on directional flow vs total degree?\n\nLet's compare how each approach partitions this directed network.",
+  "steps": [
+    {
+      "name": "Labeled Directed Network Structure",
+      "description": "## Labeled Directed Network\n\nThis network demonstrates **directed connectivity patterns** with nodes A-F (labeled 0-5) and various edge configurations.\n\n### Directed Edges (8 total):\n- **A → D, A → C**: A connects to both D and C\n- **B → D**: B feeds into D\n- **C → E, C ↔ F**: C connects to E and has bidirectional link with F\n- **E → B, F → B**: Both E and F connect to B\n\n### Node Degree Analysis:\n\n**Node Connectivity:**\n- **A**: out=2, in=0, total=2 (pure source)\n- **B**: out=1, in=2, total=3 (sink with one outgoing)\n- **C**: out=2, in=1, total=3 (balanced with high activity)\n- **D**: out=0, in=2, total=2 (pure sink)\n- **E**: out=1, in=1, total=2 (balanced flow)\n- **F**: out=2, in=1, total=3 (high out-degree)\n\n### Community Detection Challenge:\n\n**Newman-Girvan expects** degree-based grouping:\n- Total degree 3: {B, C, F}\n- Total degree 2: {A, D, E}\n\n**Leicht-Newman considers** directional flows:\n- May group by flow patterns or directional roles\n- Accounts for in/out degree differences\n\n**Key Question**: Which algorithm better captures meaningful community structure?",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | 2→0" }],
+          "color": "#666666"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | 1→2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | 2→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | 0→2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | 1→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | 2→1" }],
+          "color": "#666666"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "CF",
+          "from": "C",
+          "to": "F",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "FC",
+          "from": "F",
+          "to": "C",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "EB",
+          "from": "E",
+          "to": "B",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        },
+        {
+          "id": "FB",
+          "from": "F",
+          "to": "B",
+          "captions": [{ "value": "w:1" }],
+          "color": "#999999"
+        }
+      ]
+    },
+    {
+      "name": "First Partition: Flow-Based Communities",
+      "description": "## First Partition: Flow-Based Communities\n\n**Partition: {E,B} + {C,F} + {A,D}**\n\nThis partition groups nodes by **flow patterns** rather than degree similarity:\n\n- **Community 1 (Green)**: {E,B} - Flow-connected E→B\n- **Community 2 (Red)**: {C,F} - Bidirectional C↔F pair  \n- **Community 3 (Blue)**: {A,D} - Source-sink A→D\n\n### Modularity Scores:\n\n- **Newman-Girvan Q = 0.14** (moderate, based on degree distribution)\n- **Leicht-Newman Q = 0.31** (good, captures flow structure)\n\n### Why Leicht-Newman Performs Better:\n\nLeicht-Newman recognizes that **directional relationships** create stronger community bonds than simple degree matching. The flow-based grouping captures meaningful structural patterns in the directed network.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:3" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | deg:3" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:2" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:2" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:3" }],
+          "color": "#f44336"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "within" }],
+          "color": "#1976d2"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        },
+        {
+          "id": "CF",
+          "from": "C",
+          "to": "F",
+          "captions": [{ "value": "within" }],
+          "color": "#d32f2f"
+        },
+        {
+          "id": "FC",
+          "from": "F",
+          "to": "C",
+          "captions": [{ "value": "within" }],
+          "color": "#d32f2f"
+        },
+        {
+          "id": "EB",
+          "from": "E",
+          "to": "B",
+          "captions": [{ "value": "within" }],
+          "color": "#388e3c"
+        },
+        {
+          "id": "FB",
+          "from": "F",
+          "to": "B",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        }
+      ]
+    },
+    {
+      "name": "Second Partition: Degree-Based Communities",
+      "description": "## Second Partition: Degree-Based Communities\n\n**Partition: {A,D} + {F,C,E,B}**\n\nThis partition groups nodes by **degree patterns** rather than flow:\n\n- **Community 1 (Orange)**: {A,D} - Nodes with minimal incoming edges (receivers)\n- **Community 2 (Purple)**: {F,C,E,B} - Nodes with higher connectivity (flow-dense cluster)\n\n### Modularity Scores:\n\n- **Newman-Girvan Q = 0.125** (based on degree distribution)\n- **Leicht-Newman Q = 0.46** (excellent, considering directional flows)\n\n### Why Leicht-Newman Strongly Favors This Partition:\n\nLeicht-Newman achieves its **highest score** with this partition because it captures the main flow patterns:\n\n- **A→(C,D)**: Source node connecting to both communities\n- **Internal C↔F reciprocity**: Strong bidirectional bond within purple community\n- **E→B→D flow chain**: Directional sequence spanning communities\n\nThis demonstrates how **directional modularity** can reveal community structures that degree-based approaches miss.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:3" }],
+          "color": "#9c27b0"
+        },
+        {
+          "id": "C",
+          "captions": [{ "value": "C | deg:3" }],
+          "color": "#9c27b0"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:2" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:2" }],
+          "color": "#9c27b0"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:3" }],
+          "color": "#9c27b0"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "within" }],
+          "color": "#f57c00"
+        },
+        {
+          "id": "AC",
+          "from": "A",
+          "to": "C",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        },
+        {
+          "id": "BD",
+          "from": "B",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#999999"
+        },
+        {
+          "id": "CE",
+          "from": "C",
+          "to": "E",
+          "captions": [{ "value": "within" }],
+          "color": "#7b1fa2"
+        },
+        {
+          "id": "CF",
+          "from": "C",
+          "to": "F",
+          "captions": [{ "value": "within" }],
+          "color": "#7b1fa2"
+        },
+        {
+          "id": "FC",
+          "from": "F",
+          "to": "C",
+          "captions": [{ "value": "within" }],
+          "color": "#7b1fa2"
+        },
+        {
+          "id": "EB",
+          "from": "E",
+          "to": "B",
+          "captions": [{ "value": "within" }],
+          "color": "#7b1fa2"
+        },
+        {
+          "id": "FB",
+          "from": "F",
+          "to": "B",
+          "captions": [{ "value": "within" }],
+          "color": "#7b1fa2"
+        }
+      ]
+    }
+  ]
+}

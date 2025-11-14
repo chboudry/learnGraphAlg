@@ -1,0 +1,8 @@
+{
+  "title": "Louvain Community Detection",
+  "category": "Community Detection",
+  "directed": true,
+  "description": "This demonstration compares **Newman-Girvan modularity** and **Leicht-Newman modularity** on a directed **authority-hub network**. The network features nodes with different directional roles: sources (high out-degree), authorities (high in-degree), and intermediaries.\n\n### Network Structure:\n\n**Directed Authority-Hub Network:**\n- **Sources/Hubs**: D, E (high out-degree)\n- **Authorities/Sinks**: F, G, H (high in-degree)\n- **Cycle Nodes**: A, B, I (balanced degrees)\n\n### Newman-Girvan Modularity (This File):\n\n**Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n\n**Key Characteristics:**\n- **Treats directed graph as undirected**\n- **Uses total degrees**: ki = in-degree + out-degree\n- **Double counts edges**: Each directed edge becomes undirected\n- **Groups by connectivity volume**: Prefers nodes with similar total degrees\n\n### Why This Network Tests Modularity Differences:\n\n1. **Role-based Structure**: Clear directional roles (sources → intermediaries → sinks)\n2. **Degree Asymmetry**: Different in-degree vs out-degree patterns\n3. **Flow Patterns**: Information flows from hubs to authorities\n4. **Community Ambiguity**: Multiple valid ways to partition based on roles vs connectivity\n\n### Expected Newman-Girvan Behavior:\n\n- **Groups by total degree similarity**\n- **Ignores directional flow patterns**\n- **May group hubs with authorities** (both have high total degrees)\n- **Less sensitive to source/sink roles**\n\nLet's see how Newman-Girvan modularity partitions this directed network when treating it as undirected.",
+  "steps": [
+   ]
+}

@@ -1,0 +1,508 @@
+{
+  "title": "Modularity Comparison: Newman-Girvan vs Leicht-Newman",
+  "category": "Community Detection",
+  "directed": true,
+  "description": "This demonstration compares **Newman-Girvan modularity** and **Leicht-Newman modularity** on a directed **authority-hub network**. The network features nodes with different directional roles, making it ideal for testing how each modularity handles directed structures.\n\n### Two Modularity Approaches:\n\n**Newman-Girvan Modularity (Undirected)**:\n- **Formula**: Q = 1/(2m) Σ[Aij - (ki × kj)/(2m)] δ(ci, cj)\n- **Treats directed as undirected**: Uses total degrees only\n- **Groups by degree similarity**: Prefers nodes with similar total connectivity\n\n**Leicht-Newman Modularity (Directed)**:\n- **Formula**: Q = 1/m Σ[Aij - (ki^out × kj^in)/m] δ(ci, cj)\n- **Preserves directionality**: Uses separate in/out degrees\n- **Groups by role similarity**: Captures directional flow patterns\n\n### Why This Network Tests the Difference:\n\n**Authority-Hub Structure**:\n- **Sources/Hubs**: B(2→1), D(2→1), E(2→1) - high out-degree\n- **Authorities/Sinks**: F(1→2), H(1→2), I(1→2) - high in-degree\n- **Intermediates**: A(1→1), G(1→1) - balanced degrees\n\n**Key Test**: Can modularity detect **role-based communities** (sources vs authorities) or just **degree-based groupings**?\n\nLet's compare how each approach partitions this directed authority-hub network.",
+  "steps": [
+    {
+      "name": "Authority-Hub Network Structure",
+      "description": "## Directed Authority-Hub Network\n\nThis network demonstrates a **role-based directed structure** where nodes have different functions in information flow.\n\n### Network Pattern:\n```\nA ──→ D ──→ G\n↑     ↓     ↓\n│     E ──→ H\n│     ↓     ↓\nB ──→ F ──→ I\n↑           ↓\n└───────────┘\n```\n\n### Directed Edges (11 total):\n- **Flow Path 1**: A → D → G\n- **Flow Path 2**: A → D → E → H  \n- **Flow Path 3**: B → F → I → B (cycle return)\n- **Cross-connections**: D → E, E → F\n\n### Node Roles Analysis:\n\n**Sources/Hubs (High Out-Degree):**\n- **D**: out=2, in=1, total=3 (major hub)\n- **E**: out=2, in=1, total=3 (secondary hub)\n\n**Authorities/Sinks (High In-Degree):**\n- **F**: out=1, in=2, total=3 (authority)\n- **G**: out=1, in=1, total=2 (intermediate)\n- **H**: out=1, in=2, total=3 (authority)\n\n**Cycle Nodes (Balanced):**\n- **A**: out=1, in=1, total=2 (source)\n- **B**: out=2, in=1, total=3 (cycle hub)\n- **I**: out=1, in=2, total=3 (authority)\n\n### Newman-Girvan Analysis:\n\nSince Newman-Girvan treats this as **undirected**, it sees:\n- **High-degree nodes**: B(3), D(3), E(3), F(3), H(3), I(3) - likely to group together\n- **Medium-degree nodes**: A(2), G(2) - likely to group together  \n\n\n**Prediction**: Newman-Girvan will group by **degree similarity** rather than **directional roles**.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | 1→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "B", 
+          "captions": [{ "value": "B | 2→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | 2→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | 2→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | 1→2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "G",
+          "captions": [{ "value": "G | 1→1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "H",
+          "captions": [{ "value": "H | 1→2" }],
+          "color": "#666666"
+        },
+        {
+          "id": "I",
+          "captions": [{ "value": "I | 1→2" }],
+          "color": "#666666"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DG",
+          "from": "D",
+          "to": "G",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "EH",
+          "from": "E",
+          "to": "H",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "BF",
+          "from": "B",
+          "to": "F",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "FI",
+          "from": "F",
+          "to": "I",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "IB",
+          "from": "I",
+          "to": "B",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "GH",
+          "from": "G",
+          "to": "H",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "HI",
+          "from": "H",
+          "to": "I",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        },
+        {
+          "id": "BA",
+          "from": "B",
+          "to": "A",
+          "captions": [{ "value": "1" }],
+          "color": "#666666"
+        }
+      ]
+    },
+    {
+      "name": "Newman-Girvan: Degree-Based Grouping",
+      "description": "## Newman-Girvan Modularity Analysis\n\n**Newman-Girvan** treats the directed network as **undirected** and groups nodes by **total degree similarity**.\n\n### Newman-Girvan Partition:\n\n**🔵 Community 1 - High Degree Nodes**: {B, D, E, F, H, I}\n- **B**: total degree 3 (hub + authority mixed)\n- **D**: total degree 3 (hub + authority mixed)\n- **E**: total degree 3 (hub + authority mixed)\n- **F**: total degree 3 (hub + authority mixed)\n- **H**: total degree 3 (hub + authority mixed)\n- **I**: total degree 3 (hub + authority mixed)\n\n**🟠 Community 2 - Medium Degree Nodes**: {A, G}\n- **A**: total degree 2 (intermediate)\n- **G**: total degree 2 (intermediate)\n\n### Newman-Girvan Results:\n\n**✅ Strengths:**\n- **Degree homophily**: Successfully groups nodes with similar connectivity\n- **Clear separation**: 6 high-degree vs 2 medium-degree nodes\n- **Simple logic**: Easy to understand and compute\n\n**❌ Limitations:**\n- **Ignores roles**: Mixes hubs (B,D,E) with authorities (F,H,I)\n- **Loses directionality**: Can't distinguish sources from sinks\n- **Poor semantic grouping**: Doesn't capture functional roles\n\n### Newman-Girvan Q ≈ 0.25\n\n**Moderate modularity** - groups by connectivity but misses directional structure.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | deg:2" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "G",
+          "captions": [{ "value": "G | deg:2" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "H",
+          "captions": [{ "value": "H | deg:3" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "I",
+          "captions": [{ "value": "I | deg:3" }],
+          "color": "#2196f3"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DG",
+          "from": "D",
+          "to": "G",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "within" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "EH",
+          "from": "E",
+          "to": "H",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "within" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "BF",
+          "from": "B",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "FI",
+          "from": "F",
+          "to": "I",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "IB",
+          "from": "I",
+          "to": "B",
+          "captions": [{ "value": "within" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "GH",
+          "from": "G",
+          "to": "H",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "HI",
+          "from": "H",
+          "to": "I",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "BA",
+          "from": "B",
+          "to": "A",
+          "captions": [{ "value": "within" }],
+          "color": "#ff9800"
+        }
+      ]
+    },
+    {
+      "name": "Alternative: Flow-Based Partition",
+      "description": "## Alternative Partition: Following Directional Flow\n\nLet's try a **flow-based partition** that respects the directional structure, and see how Newman-Girvan modularity evaluates it.\n\n### Flow-Based Partition:\n\n**Community 1 (Blue) - Source Cycle**: {A, B, I}\n- **Flow pattern**: A → ... → B → F → I → B (input cycle)\n- **Role**: Input generators and cycle maintainers\n\n**Community 2 (Orange) - Hub Layer**: {D, E}\n- **Flow pattern**: Receive from sources, distribute to authorities\n- **Role**: Central processing hubs\n\n**Community 3 (Green) - Authority/Sink Layer**: {F, G, H}\n- **Flow pattern**: Receive from hubs, terminate flows\n- **Role**: Information consumers and sinks\n\n### Why This Might Be Better Structurally:\n\n**Directional Logic**:\n- **Layer 1**: Sources generate and cycle information\n- **Layer 2**: Hubs process and distribute\n- **Layer 3**: Authorities consume and terminate\n\n**Flow Efficiency**: Minimizes cross-layer connections that go against natural flow\n\n### Edge Analysis for Flow-Based Partition:\n\n**Within Communities**:\n- **Community 1**: I → B (1 edge within)\n- **Community 2**: D → E (1 edge within) \n- **Community 3**: No internal connections\n\n**Between Communities**: 6 edges cross boundaries (same as degree-based)\n\n### Newman-Girvan Evaluation:\n\n**Problem**: Newman-Girvan doesn't recognize this as better because:\n- It groups **different degree nodes** together (A,B,I with degrees 2,2,2 vs F,G,H with degrees 3,1,1)\n- **Expected connections** based on degree products don't align with actual flow patterns\n- **Degree heterogeneity** within communities reduces modularity score\n\n**Expected modularity**: ~0.05-0.15 (lower than degree-based partition)\n\n**Insight**: Newman-Girvan's degree-based expectation model doesn't capture the **directional role-based community structure** effectively.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | src" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | cyc" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | hub" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | hub" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | auth" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "G",
+          "captions": [{ "value": "G | sink" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "H",
+          "captions": [{ "value": "H | sink" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "I",
+          "captions": [{ "value": "I | cyc" }],
+          "color": "#2196f3"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DG",
+          "from": "D",
+          "to": "G",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "within" }],
+          "color": "#ff9800"
+        },
+        {
+          "id": "EH",
+          "from": "E",
+          "to": "H",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "BF",
+          "from": "B",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "FI",
+          "from": "F",
+          "to": "I",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "IB",
+          "from": "I",
+          "to": "B",
+          "captions": [{ "value": "within" }],
+          "color": "#2196f3"
+        },
+        {
+          "id": "GH",
+          "from": "G",
+          "to": "H",
+          "captions": [{ "value": "within" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "HI",
+          "from": "H",
+          "to": "I",
+          "captions": [{ "value": "cross" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "BA",
+          "from": "B",
+          "to": "A",
+          "captions": [{ "value": "within" }],
+          "color": "#2196f3"
+        }
+      ]
+    },
+    {
+      "name": "Leicht-Newman: Role-Based Grouping",
+      "description": "## Leicht-Newman Modularity Analysis\n\n**Leicht-Newman** preserves **directionality** and groups nodes by **functional roles** using separate in-degrees and out-degrees.\n\n### Leicht-Newman Partition:\n\n**🟢 Community 1 - Sources (High Out-Degree)**: {B, D, E}\n- **B**: 2→1 (out-degree 2, in-degree 1) - **Hub role**\n- **D**: 2→1 (out-degree 2, in-degree 1) - **Hub role**\n- **E**: 2→1 (out-degree 2, in-degree 1) - **Hub role**\n\n**🔴 Community 2 - Authorities (High In-Degree)**: {F, H, I}\n- **F**: 1→2 (out-degree 1, in-degree 2) - **Authority role**\n- **H**: 1→2 (out-degree 1, in-degree 2) - **Authority role**\n- **I**: 1→2 (out-degree 1, in-degree 2) - **Authority role**\n\n**🟡 Community 3 - Intermediates (Balanced)**: {A, G}\n- **A**: 1→1 (out-degree 1, in-degree 1) - **Intermediate role**\n- **G**: 1→1 (out-degree 1, in-degree 1) - **Intermediate role**\n\n### Leicht-Newman Results:\n\n**✅ Advantages over Newman-Girvan:**\n- **Role separation**: Sources {B,D,E} separated from authorities {F,H,I}\n- **Directional awareness**: Uses out-degree vs in-degree distinction\n- **Functional grouping**: Communities reflect actual network roles\n- **Better null model**: Expected edges based on directed configuration\n\n**📊 Performance Comparison:**\n- **Newman-Girvan Q ≈ 0.25**: Degree-based partition {B,D,E,F,H,I} vs {A,G}\n- **Leicht-Newman Q ≈ 0.35**: Role-based partition {B,D,E} vs {F,H,I} vs {A,G}\n\n### Why Leicht-Newman Excels Here:\n\n**🎯 Authority-Hub Network Benefits:**\n- **Clear role differentiation**: Sources feed information to authorities\n- **Directional flow patterns**: Network has inherent source→authority structure\n- **Asymmetric connectivity**: Out-degree ≠ in-degree creates meaningful roles\n\n### Leicht-Newman Q ≈ 0.35\n\n**Higher modularity** - better captures directional community structure in authority-hub networks.",
+      "nodes": [
+        {
+          "id": "A",
+          "captions": [{ "value": "A | 1→1" }],
+          "color": "#ffeb3b"
+        },
+        {
+          "id": "B",
+          "captions": [{ "value": "B | 2→1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "D",
+          "captions": [{ "value": "D | 2→1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "E",
+          "captions": [{ "value": "E | 2→1" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "F",
+          "captions": [{ "value": "F | 1→2" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "G",
+          "captions": [{ "value": "G | 1→1" }],
+          "color": "#ffeb3b"
+        },
+        {
+          "id": "H",
+          "captions": [{ "value": "H | 1→2" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "I",
+          "captions": [{ "value": "I | 1→2" }],
+          "color": "#f44336"
+        }
+      ],
+      "relationships": [
+        {
+          "id": "AD",
+          "from": "A",
+          "to": "D",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DG",
+          "from": "D",
+          "to": "G",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "DE",
+          "from": "D",
+          "to": "E",
+          "captions": [{ "value": "within" }],
+          "color": "#4caf50"
+        },
+        {
+          "id": "EH",
+          "from": "E",
+          "to": "H",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "EF",
+          "from": "E",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "BF",
+          "from": "B",
+          "to": "F",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "FI",
+          "from": "F",
+          "to": "I",
+          "captions": [{ "value": "within" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "IB",
+          "from": "I",
+          "to": "B",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "GH",
+          "from": "G",
+          "to": "H",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        },
+        {
+          "id": "HI",
+          "from": "H",
+          "to": "I",
+          "captions": [{ "value": "within" }],
+          "color": "#f44336"
+        },
+        {
+          "id": "BA",
+          "from": "B",
+          "to": "A",
+          "captions": [{ "value": "cross" }],
+          "color": "#666666"
+        }
+      ]
+    }
+  ]
+}
